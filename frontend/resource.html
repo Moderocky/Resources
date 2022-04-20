@@ -3,13 +3,19 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
-    <script src="assets/js/load.js" type="module"></script>
+    <script src="assets/js/load.mjs" type="module"></script>
     <script type="module">
-        import {repository} from "./assets/js/load.js";
-        document.head.insertAdjacentHTML('beforeend', `<title>Resource | ` + repository.name + `</title>`);
-        document.head.insertAdjacentHTML('beforeend', `<meta name="description" content="` + repository.description + `"/>`);
-        document.head.insertAdjacentHTML('beforeend', `<meta name="keywords" content="` + repository['topics'].join(', ') + `"/>`);
-        document.head.insertAdjacentHTML('beforeend', `<link rel="icon" type="image/x-icon" href="` + repository['owner']['avatar_url'] + `">`);
+        import {pendingRepository} from "./assets/js/load.mjs";
+        try {
+            pendingRepository.then(repository => {
+                document.head.insertAdjacentHTML('beforeend', `<title>Resource | ` + repository.name + `</title>`);
+                document.head.insertAdjacentHTML('beforeend', `<meta name="description" content="` + repository.description + `"/>`);
+                document.head.insertAdjacentHTML('beforeend', `<meta name="keywords" content="` + repository['topics'].join(', ') + `"/>`);
+                document.head.insertAdjacentHTML('beforeend', `<link rel="icon" type="image/x-icon" href="` + repository['owner']['avatar_url'] + `">`);
+            });
+        } catch (error) {
+            console.error(error);
+        }
     </script>
     <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
           rel="stylesheet"/>
@@ -21,8 +27,6 @@
     <link href="assets/css/style.css" rel="stylesheet"/>
 </head>
 <body class="dark:bg-gray-800 dark:text-gray-300">
-
-
 <div class="mt-20 mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
     <div class="">
         <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container border-b py-1 lg:py-2.5">
@@ -123,11 +127,11 @@
             <div id="latest-release" class="hidden w-full xl:w-9/12 p-2">
                 <div class="markdown"></div>
                 <script type="module">
-                    import {repository, github} from "./assets/js/load.js";
-                    import {dom} from "./assets/js/lib/dom.js";
-                    import {generateMarkdown, fixMarkdown} from "./assets/js/resource.js";
+                    import {github} from "./assets/js/load.mjs";
+                    import {dom} from "./assets/js/lib/dom.mjs";
+                    import {generateMarkdown, fixMarkdown} from "./assets/js/resource.mjs";
                     const box = document.getElementById('latest-release').firstElementChild;
-                    github.latestRelease(true).then(release => {
+                    github.latestRelease(true).then(async release => {
                         if (release == null) return;
                         let background = ((release['prerelease'] || release['draft'])) ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-sky-500 to-cyan-400';
                         let meta;
@@ -161,9 +165,9 @@
             <div id="author-information" class="hidden w-full xl:w-9/12">
                 <div data-author-information class=""></div>
                 <script type="module">
-                    import {repository, github} from "./assets/js/load.js";
-                    import {dom} from "./assets/js/lib/dom.js";
-                    import {Random} from "./assets/js/lib/random.js";
+                    import {pendingRepository} from "./assets/js/load.mjs";
+                    import {dom} from "./assets/js/lib/dom.mjs";
+                    import {Random} from "./assets/js/lib/random.mjs";
                     const options = [
                         'from-pink-400/20 to-red-400/20 hover:from-pink-400/50 hover:to-red-400/50 transition',
                         'from-red-400/20 to-rose-400/20 hover:from-red-400/50 hover:to-rose-400/50 transition',
@@ -176,17 +180,18 @@
                         'from-orange-400/20 to-amber-400/20 hover:from-orange-400/50 hover:to-amber-400/50 transition'];
                     const random = new Random(12);
                     const box = document.getElementById('author-information').firstElementChild;
-                    repository.getOwner().then(user => {
-                        box.appendChild(dom.create(`
+                    pendingRepository.then(repository => {
+                        repository.getOwner().then(user => {
+                            box.appendChild(dom.create(`
                             <div class="rounded-xl m-2 px-4 py-6 border border-gray-200 dark:border-gray-500">
                                 <div class="flex flex-auto space-x-4">
-                                    <img alt="User icon." class="w-20 h-20 rounded-full" src="`+ (user.avatar_url) +`" />
+                                    <img alt="User icon." class="w-20 h-20 rounded-full" src="` + (user.avatar_url) + `" />
                                     <div class="my-auto">
                                         <h2 class="text-3xl">{name}
                                         ` + (user.type === 'Organization'
-                                    ? `<span class="uppercase bg-slate-600 rounded-lg py-1.5 px-2 text-white text-xl">Org</span>` : '') + `</h2>
+                                ? `<span class="uppercase bg-slate-600 rounded-lg py-1.5 px-2 text-white text-xl">Org</span>` : '') + `</h2>
                                         ` + (user.bio != null
-                                    ? `<p class="pt-2">` + user.bio + `</p>` : '') + `
+                                ? `<p class="pt-2">` + user.bio + `</p>` : '') + `
                                     </div>
                                 </div>
                                 <div class="mt-4">
@@ -210,37 +215,53 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>`, {name: (user.name || user.login), following: user.following, followers: user.followers, hire: (user.hireable === true ? 'For Hire' : 'Not For Hire')}));
-                        let container;
-                        box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
-                        async function details() {
-                            const repositories = await user.getRepositories();
-                            let i = 0;
-                            for (let repo of repositories) {
-                                i++;
-                                container.appendChild(dom.create(`
+                            </div>`, {
+                                name: (user.name || user.login),
+                                following: user.following,
+                                followers: user.followers,
+                                hire: (user.hireable === true ? 'For Hire' : 'Not For Hire')
+                            }));
+                            let container;
+                            box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
+
+                            async function details() {
+                                const repositories = await user.getRepositories();
+                                let i = 0;
+                                for (let repo of repositories) {
+                                    i++;
+                                    container.appendChild(dom.create(`
                                     <div class="w-full md:w-4/12 lg:w-6/12 2xl:w-4/12 p-2 cursor-pointer" onclick="window.location.search = '&id=` + repo.id + `'">
                                         <div class="rounded-xl h-full px-4 py-6 border border-gray-200 dark:border-gray-500 shadow-cla-violate bg-gradient-to-r {random}">
                                             <h2 class="text-xl">{title}</h2>
                                             <p class="mt-4 text-sm">{description}</p>
                                         </div>
-                                    </div>`, {title: repo.name, description: repo.description, random: () => (options[Math.floor(random.next() * options.length)])}));
-                                if (i > 8) break;
+                                    </div>`, {
+                                        title: repo.name,
+                                        description: repo.description,
+                                        random: () => (options[Math.floor(random.next() * options.length)])
+                                    }));
+                                    if (i > 8) break;
+                                }
+                                const languages = await user.getLanguages();
+                                const div = box.querySelector('div[data-languages]');
+                                for (let name in languages) {
+                                    const variables = {
+                                        name: name,
+                                        value: languages[name],
+                                        colour: (languages[name] > 1000000 ? 'emerald' : languages[name] > 100000 ? 'sky' : languages[name] > 10000 ? 'amber' : 'gray')
+                                    };
+                                    if (name === 'Java') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-java"></i> {name} </p>`, variables));
+                                    else if (name === 'JavaScript') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-js-square"></i> {name} </p>`, variables));
+                                    else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
+                                    else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
+                                    else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
+                                    else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
+                                    else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
+                                }
                             }
-                            const languages = await user.getLanguages();
-                            const div = box.querySelector('div[data-languages]');
-                            for (let name in languages) {
-                                const variables = {name: name, value: languages[name], colour: (languages[name] > 1000000 ? 'emerald' : languages[name] > 100000 ? 'sky' : languages[name] > 10000 ? 'amber' : 'gray')};
-                                if (name === 'Java') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-java"></i> {name} </p>`, variables));
-                                else if (name === 'JavaScript') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-js-square"></i> {name} </p>`, variables));
-                                else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
-                                else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
-                                else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
-                                else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
-                                else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
-                            }
-                        }
-                        details().then();
+
+                            details().then();
+                        });
                     });
                 </script>
             </div>
@@ -261,7 +282,7 @@
                             <i class="fa-solid fa-desktop w-5"></i> Website
                         </div>
                         <script type="module">
-                            import {repository, github} from "./assets/js/load.js";
+                            import {repository, github} from "./assets/js/load.mjs";
                             const bar = document.querySelector('[data-action-bar]');
                             bar.querySelector('[data-link-to-issues]').onclick = () => window.location = repository['html_url'] + '/issues';
                             if (repository['homepage'] != null) {
@@ -306,7 +327,7 @@
 </div>
 
 <script type="module">
-    import {fixScrollBehaviour} from "./assets/js/lib/scroll.js";
+    import {fixScrollBehaviour} from "./assets/js/lib/scroll.mjs";
     fixScrollBehaviour();
     addEventListener('hashchange', revealElement);
     revealElement();
@@ -324,6 +345,6 @@
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="assets/js/resource.js" type="module"></script>
+<script src="assets/js/resource.mjs" type="module"></script>
 </body>
 </html>

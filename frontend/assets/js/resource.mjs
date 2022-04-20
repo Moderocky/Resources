@@ -1,27 +1,29 @@
 
-import {dom} from "./lib/dom.js";
-import {github, repository} from "./load.js";
+import {dom} from "./lib/dom.mjs";
+import {github, repository, pendingRepository} from "./load.mjs";
 
-for (const element of document.querySelectorAll('[data-resource-icon]')) {
-    element.src = getIcon();
-}
+pendingRepository.then(repository => {
+    for (const element of document.querySelectorAll('[data-resource-icon]')) {
+        element.src = getIcon();
+    }
 
-for (const element of document.querySelectorAll('[data-author-icon]')) {
-    element.src = repository['owner']['avatar_url'];
-}
+    for (const element of document.querySelectorAll('[data-author-icon]')) {
+        element.src = repository['owner']['avatar_url'];
+    }
 
-for (const element of document.querySelectorAll('[data-last-updated]')) {
-    const time = repository['pushed_at'];
-    const first = github.parseDate(time), second = Date.now();
-    element.appendChild(document.createTextNode(Math.round((second-first)/(1000*60*60*24)) + ' days ago.'));
-}
+    for (const element of document.querySelectorAll('[data-last-updated]')) {
+        const time = repository['pushed_at'];
+        const first = github.parseDate(time), second = Date.now();
+        element.appendChild(document.createTextNode(Math.round((second - first) / (1000 * 60 * 60 * 24)) + ' days ago.'));
+    }
 
-for (const element of document.querySelectorAll('[data-readme]')) {
-    github.getFileContent('README.md').then(text => {
-        generateMarkdown(text, element);
-        fixMarkdown(element);
-    })
-}
+    for (const element of document.querySelectorAll('[data-readme]')) {
+        github.getFileContent('README.md').then(text => {
+            generateMarkdown(text, element);
+            fixMarkdown(element);
+        })
+    }
+});
 
 for (const element of document.querySelectorAll('[data-version-history]')) {
     github.listReleases().then(releases => {
@@ -112,20 +114,21 @@ function fixMarkdown(element) {
 
 export {generateMarkdown, fixMarkdown}
 
-for (const element of document.querySelectorAll('[data-link-to-repo]')) {
-    if (element.tagName === 'A') element.href = repository['html_url'];
-    else element.onclick = () => window.location = repository['html_url'];
-}
+pendingRepository.then(async repository => {
+    for (const element of document.querySelectorAll('[data-link-to-repo]')) {
+        if (element.tagName === 'A') element.href = repository['html_url'];
+        else element.onclick = () => window.location = repository['html_url'];
+    }
 
-for (const element of document.querySelectorAll('[data-retrieve]')) {
-    let value = retrieve(element.dataset.retrieve);
-    if (typeof value === 'function') {
-        if (value.constructor.name === 'AsyncFunction') {
-            element.appendChild(document.createTextNode(await value()));
-        }
-        else element.appendChild(document.createTextNode(value()));
-    } else element.appendChild(document.createTextNode(value));
-}
+    for (const element of document.querySelectorAll('[data-retrieve]')) {
+        let value = retrieve(element.dataset.retrieve);
+        if (typeof value === 'function') {
+            if (value.constructor.name === 'AsyncFunction') {
+                element.appendChild(document.createTextNode(await value()));
+            } else element.appendChild(document.createTextNode(value()));
+        } else element.appendChild(document.createTextNode(value));
+    }
+});
 
 async function countDownloads() {
     const releases = await github.listReleases();

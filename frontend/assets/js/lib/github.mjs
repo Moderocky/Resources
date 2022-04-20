@@ -1,5 +1,5 @@
 
-import {http} from './request.js';
+import {http} from './request.mjs';
 const api = '/api/git';
 
 async function gitRequest(url, vars = {}) {
@@ -25,9 +25,11 @@ class GitHub {
         if (link.endsWith('/')) this.url = link;
         else this.url = link + '/';
         try {
-            this.listFiles().then();
-            this.getRepository().then();
-        } catch (error) {}
+            this.listFiles().catch(console.log);
+            this.getRepository().catch(console.log);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     internal = {
