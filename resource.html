@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <script src="assets/js/load.js" type="module"></script>
+    <script type="module">
+        import {repository} from "./assets/js/load.js";
+        document.head.insertAdjacentHTML('beforeend', `<title>Resource | ` + repository.name + `</title>`);
+        document.head.insertAdjacentHTML('beforeend', `<meta name="description" content="` + repository.description + `"/>`);
+        document.head.insertAdjacentHTML('beforeend', `<meta name="keywords" content="` + repository['topics'].join(', ') + `"/>`);
+        document.head.insertAdjacentHTML('beforeend', `<link rel="icon" type="image/x-icon" href="` + repository['owner']['avatar_url'] + `">`);
+    </script>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          rel="stylesheet"/>
+    <link crossorigin href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link crossorigin href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap"
+          rel="stylesheet"/>
+    <script src="assets/js/lib/tailwind.js"></script>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+</head>
+<body class="dark:bg-gray-800 dark:text-gray-300">
+
+
+<div class="mt-20 mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
+    <div class="">
+        <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container border-b py-1 lg:py-2.5">
+            <div class="flex mr-auto space-x-4">
+                <img alt="Resource icon" class="w-12 h-12 rounded-lg border dark:border-gray-500" data-resource-icon
+                     src="">
+                <h5 class="text-3xl md:pb-1 mt-auto text-gray-600 dark:text-gray-100 font-medium lg:block"
+                    data-retrieve="name"></h5>
+                <h4 class="mt-auto md:pb-1 text-gray-400 text-2xl" data-retrieve="version"></h4>
+            </div>
+            <div class="flex space-x-4">
+                <button aria-label="chat"
+                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-orange-500 to-amber-500"
+                        data-link-to-repo>
+                    <i class="fa-solid fa-code-branch text-white"></i>
+                </button>
+                <button aria-label="chat"
+                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
+                    <i class="fa-solid fa-download text-white"></i>
+                </button>
+                <button aria-label="chat"
+                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-green-500 to-emerald-400">
+                    <i class="fa-solid fa-link text-white"></i>
+                </button>
+            </div>
+        </div>
+        <div class="px-6 py-1 lg:py-2.5" data-retrieve="description">
+        </div>
+    </div>
+    <div class="px-4 2xl:container">
+        <div class="container lg:my-2 flex flex-wrap">
+            <div class="w-full lg:w-4/12 2xl:w-3/12 p-2">
+                <div class="h-full p-4 rounded-xl border border-gray-200 dark:border-gray-500">
+                    <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Author</h5>
+                    <div class="text-md text-white text-lg flex space-x-2 my-2 rounded-lg border-2 dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
+                        <img alt="avatar" class="rounded-l-md border-r-2 w-10 h-10" data-author-icon src="">
+                        <p class="my-auto" data-retrieve="owner.login"></p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-md flex space-x-2 text-gray-500 dark:text-gray-400">
+                            <p data-last-updated>Updated </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full lg:w-8/12 2xl:w-9/12 p-2">
+                <div class="h-full p-4 space-y-4 rounded-xl border border-gray-200 dark:border-gray-500">
+                    <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Contributors</h5>
+                    <div class="flex flex-wrap" data-display-contributors>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="px-4 2xl:container">
+        <div class="container lg:my-2 flex flex-wrap">
+            <div class="w-full p-2 fancy-scroll">
+                <div class="w-full flex items-center space-x-4 overflow-y-auto whitespace-nowrap">
+                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#description">
+                        Description</a>
+                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#latest-release">
+                        Latest Release</a>
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#">
+                        Reviews</a>
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#">
+                        Discussion</a>
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#">
+                        Website</a>
+                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#version-history">
+                        Version History</a>
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#">
+                        Documentation</a>
+                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                       href="#author-information">
+                        Author Information</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="px-4 2xl:container" data-content>
+        <div class="flex flex-wrap">
+            <div id="description" class="w-full xl:w-9/12 p-2 markdown" data-readme>
+
+            </div>
+            <div id="version-history" class="hidden w-full xl:w-9/12 p-2">
+                <div data-version-history class="flex flex-col md:grid grid-cols-9 mx-auto p-2 text-blue-50">
+
+                </div>
+            </div>
+            <div id="latest-release" class="hidden w-full xl:w-9/12 p-2">
+                <div class="markdown"></div>
+                <script type="module">
+                    import {repository, github} from "./assets/js/load.js";
+                    import {dom} from "./assets/js/lib/dom.js";
+                    import {generateMarkdown, fixMarkdown} from "./assets/js/resource.js";
+                    const box = document.getElementById('latest-release').firstElementChild;
+                    github.latestRelease(true).then(release => {
+                        if (release == null) return;
+                        let background = ((release['prerelease'] || release['draft'])) ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-sky-500 to-cyan-400';
+                        let meta;
+                        box.appendChild(meta = dom.create(`
+                            <div class="rounded-xl mb-4 px-4 py-6 border border-gray-200 dark:border-gray-500">
+                                <h2 class="text-3xl"><span class="rounded-lg text-2xl px-2.5 py-1.5 mr-2 text-white ` + background + `">` + release.tag_name + `</span> ` + release.name + `</h2>
+                                <div data-assets></div>
+                            </div>`));
+                        const children = meta.querySelector('[data-assets]');
+                        for (let asset of release['assets']) {
+                            let icon;
+                            if (asset.name.endsWith('.zip')) icon = `<i class="fa-solid fa-file-zipper cursor-pointer w-7"></i>`;
+                            else if (asset.name.endsWith('.jar')) icon = `<i class="fa-solid fa-file-zipper cursor-pointer w-7"></i>`;
+                            else if (asset.name.endsWith('.png')) icon = `<i class="fa-solid fa-file-image cursor-pointer w-7"></i>`;
+                            else if (asset.name.endsWith('.sh')) icon = `<i class="fa-solid fa-file-code cursor-pointer w-7"></i>`;
+                            else if (asset.name.endsWith('.csv')) icon = `<i class="fa-solid fa-file-csv cursor-pointer w-7"></i>`;
+                            else icon = `<i class="fa-solid fa-file-lines cursor-pointer w-7"></i>`;
+                            const button = dom.create(`<button class="items-center border-t border-b border-r border-gray-300 dark:border-gray-500 text-md px-2 py-1.5 cursor-alias">` + icon + ` ` + asset.name + `</button>`);
+                            button.onclick = () => window.open(asset['browser_download_url'], '_blank');
+                            children.appendChild(button);
+                        }
+                        if (release['assets'].length > 0) {
+                            children.firstElementChild.classList.add('rounded-l-lg', 'border-l');
+                            children.lastElementChild.classList.add('rounded-r-lg');
+                        }
+                        generateMarkdown(release.body, box);
+                        fixMarkdown(box);
+                    });
+                </script>
+            </div>
+            <div id="author-information" class="hidden w-full xl:w-9/12">
+                <div data-author-information class=""></div>
+                <script type="module">
+                    import {repository, github} from "./assets/js/load.js";
+                    import {dom} from "./assets/js/lib/dom.js";
+                    import {Random} from "./assets/js/lib/random.js";
+                    const options = [
+                        'from-pink-400/20 to-red-400/20 hover:from-pink-400/50 hover:to-red-400/50 transition',
+                        'from-red-400/20 to-rose-400/20 hover:from-red-400/50 hover:to-rose-400/50 transition',
+                        'from-blue-400/20 to-indigo-400/20 hover:from-blue-400/50 hover:to-indigo-400/50 transition',
+                        'from-indigo-400/20 to-violet-400/20 hover:from-indigo-400/50 hover:to-violet-400/50 transition',
+                        'from-violet-400/20 to-fuchsia-400/20 hover:from-violet-400/50 hover:to-fuchsia-400/50 transition',
+                        'from-sky-400/20 to-cyan-400/20 hover:from-sky-400/50 hover:to-cyan-400/50 transition',
+                        'from-green-400/20 to-emerald-400/20 hover:from-green-400/50 hover:to-emerald-400/50 transition',
+                        'from-emerald-400/20 to-teal-400/20 hover:from-emerald-400/50 hover:to-teal-400/50 transition',
+                        'from-orange-400/20 to-amber-400/20 hover:from-orange-400/50 hover:to-amber-400/50 transition'];
+                    const random = new Random(12);
+                    const box = document.getElementById('author-information').firstElementChild;
+                    repository.getOwner().then(user => {
+                        box.appendChild(dom.create(`
+                            <div class="rounded-xl m-2 px-4 py-6 border border-gray-200 dark:border-gray-500">
+                                <div class="flex flex-auto space-x-4">
+                                    <img alt="User icon." class="w-20 h-20 rounded-full" src="`+ (user.avatar_url) +`" />
+                                    <div class="my-auto">
+                                        <h2 class="text-3xl">{name}
+                                        ` + (user.type === 'Organization'
+                                    ? `<span class="uppercase bg-slate-600 rounded-lg py-1.5 px-2 text-white text-xl">Org</span>` : '') + `</h2>
+                                        ` + (user.bio != null
+                                    ? `<p class="pt-2">` + user.bio + `</p>` : '') + `
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex flex-wrap justify-between p-4 w-full">
+                                        <div class="w-full md:w-6/12 space-y-2 text-gray-500 mr-auto">
+                                        ` + (user.company != null ? `<h3><i class="fa-solid fa-briefcase w-5"></i> ` + user.company + `</h3>` : '') + `
+                                        ` + (user.twitter_username != null ? `<h3><i class="fa-brands fa-twitter w-5"></i> ` + user.twitter_username + `</h3>` : '') + `
+                                        ` + (user.location != null ? `<h3><i class="fa-solid fa-map-location-dot w-5"></i> ` + user.location + `</h3>` : '') + `
+                                        ` + (user.blog != null ? `<h3><i class="fa-solid fa-desktop w-5"></i> ` + user.blog + `</h3>` : '') + `
+                                        </div>
+                                        <div class="w-full md:w-6/12">
+                                            <div class="w-full flex h-min text-lg text-gray-600 dark:text-gray-400">
+                                                <div class="rounded-l-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 border">Following {following}</div>
+                                                <div class="py-1.5 px-3 border-gray-200 dark:border-gray-500 border-t border-b">{hire}</div>
+                                                <div class="rounded-r-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 border">{followers} Followers</div>
+                                            </div>
+                                            <div class="rounded-lg mt-4 py-1.5 px-3 border-gray-200 dark:border-gray-500 border h-min text-lg text-gray-600 dark:text-gray-400">
+                                                <h3 class="text-lg mb-2">Language Proficiency</h3>
+                                                <div data-languages class="text-md flex flex-wrap text-gray-500 space-x-3"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`, {name: (user.name || user.login), following: user.following, followers: user.followers, hire: (user.hireable === true ? 'For Hire' : 'Not For Hire')}));
+                        let container;
+                        box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
+                        async function details() {
+                            const repositories = await user.getRepositories();
+                            let i = 0;
+                            for (let repo of repositories) {
+                                i++;
+                                container.appendChild(dom.create(`
+                                    <div class="w-full md:w-4/12 lg:w-6/12 2xl:w-4/12 p-2 cursor-pointer" onclick="window.location.search = '&id=` + repo.id + `'">
+                                        <div class="rounded-xl h-full px-4 py-6 border border-gray-200 dark:border-gray-500 shadow-cla-violate bg-gradient-to-r {random}">
+                                            <h2 class="text-xl">{title}</h2>
+                                            <p class="mt-4 text-sm">{description}</p>
+                                        </div>
+                                    </div>`, {title: repo.name, description: repo.description, random: () => (options[Math.floor(random.next() * options.length)])}));
+                                if (i > 8) break;
+                            }
+                            const languages = await user.getLanguages();
+                            const div = box.querySelector('div[data-languages]');
+                            for (let name in languages) {
+                                const variables = {name: name, value: languages[name], colour: (languages[name] > 1000000 ? 'emerald' : languages[name] > 100000 ? 'sky' : languages[name] > 10000 ? 'amber' : 'gray')};
+                                if (name === 'Java') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-java"></i> {name} </p>`, variables));
+                                else if (name === 'JavaScript') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-js-square"></i> {name} </p>`, variables));
+                                else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
+                                else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
+                                else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
+                                else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
+                                else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
+                            }
+                        }
+                        details().then();
+                    });
+                </script>
+            </div>
+            <div class="w-full xl:w-3/12 flex h-full flex-wrap">
+                <div class="w-full md:w-6/12 xl:w-full py-2 p-2">
+                    <div data-action-bar class="py-6 px-4 m-0 space-y-2 rounded-xl border border-gray-200 dark:border-gray-500">
+                        <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Actions</h5>
+                        <div data-link-to-issues class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400 cursor-pointer">
+                            <i class="fa-solid fa-bug-slash w-5"></i> Report an Issue
+                        </div>
+                        <div data-link-to-releases class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-violet-500 to-fuchsia-400 cursor-pointer">
+                            <i class="fa-solid fa-file-zipper w-5"></i> Releases
+                        </div>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-cyan-500 to-teal-400 cursor-pointer">
+                            <i class="fa-regular fa-star-half-stroke"></i> Review
+                        </div>
+                        <div data-link-to-website class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-amber-500 to-yellow-400 cursor-pointer">
+                            <i class="fa-solid fa-desktop w-5"></i> Website
+                        </div>
+                        <script type="module">
+                            import {repository, github} from "./assets/js/load.js";
+                            const bar = document.querySelector('[data-action-bar]');
+                            bar.querySelector('[data-link-to-issues]').onclick = () => window.location = repository['html_url'] + '/issues';
+                            if (repository['homepage'] != null) {
+                                const element = bar.querySelector('[data-link-to-website]');
+                                element.onclick = () => window.location = repository['homepage'];
+                                element.classList.remove('hidden');
+                            }
+                            github.listReleases().then(releases => {
+                                if (releases.length < 0) return;
+                                const element = bar.querySelector('[data-link-to-releases]');
+                                element.onclick = () => window.location = repository['html_url'] + '/releases';
+                                element.classList.remove('hidden');
+                            })
+
+                        </script>
+                    </div>
+                </div>
+                <div class="w-full md:w-6/12 xl:w-full py-2 p-2">
+                    <div class="py-6 px-4 m-0 space-y-2 rounded-xl border border-gray-200 dark:border-gray-500">
+                        <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Statistics</h5>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-violet-400">
+                            <i class="fa-regular fa-eye w-4"></i> <span data-retrieve="subscribers_count"></span>
+                            Watchers
+                        </div>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-sky-500 to-cyan-400">
+                            <i class="fa-solid fa-download w-4"></i> <span data-downloads-count>0</span> Downloads
+                        </div>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-400">
+                            <i class="fa-solid fa-code-fork w-4"></i> <span data-retrieve="forks_count"></span> Forks
+                        </div>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-orange-500 to-amber-400">
+                            <i class="fa-regular fa-star w-4"></i> <span data-retrieve="stargazers_count"></span> Stars
+                        </div>
+                        <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400">
+                            <i class="fa-solid fa-bug w-4"></i> <span data-retrieve="open_issues_count"></span> Issues
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import {fixScrollBehaviour} from "./assets/js/lib/scroll.js";
+    fixScrollBehaviour();
+    addEventListener('hashchange', revealElement);
+    revealElement();
+    function wait(time) { return new Promise(resolve => setTimeout(resolve, time)); }
+    async function revealElement(event) {
+        if (location.hash.length < 1) return;
+        const anchor = location.hash.substring(1);
+        const body = document.querySelector('[data-content]');
+        for (let node of body.querySelectorAll('div[id]')) node.classList.add('opacity-0', 'transition-opacity');
+        await wait(200);
+        for (let node of body.querySelectorAll('div[id]')) node.classList.add('hidden');
+        const node = document.getElementById(anchor);
+        node.classList.remove('hidden');
+        node.classList.remove('opacity-0');
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="assets/js/resource.js" type="module"></script>
+</body>
+</html>
