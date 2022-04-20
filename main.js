@@ -66,7 +66,7 @@ async function handle(request, response) {
         await api(request, response);
     } else {
         try {
-            const link = 'frontend' + request.url.trim();
+            const link = 'frontend' + request.url.split(/[?#]/)[0];
             const data = system.readFileSync(link, 'utf8');
             response.setHeader("Content-Type", mime.getType(link));
             response.writeHead(200);
