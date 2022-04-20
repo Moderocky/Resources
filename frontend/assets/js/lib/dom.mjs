@@ -4,11 +4,33 @@ const dom = {
     parse: function (text, type= 'text/html') {
         return this.parser.parseFromString(text, type || 'text/xml');
     },
+    _template: function (element, variables) {
+        if (element == null || element.tagName == null) return;
+        for (let template of element.querySelectorAll(`template[data-wait-for]`)) {
+            const key = template.dataset.waitFor;
+            let value = variables[key];
+            if (value == null) continue;
+            if (!isAsync(value)) continue;
+            value().then(result => {
+                template.replaceWith(document.createTextNode((result != null ? result : '').toString()));
+            }).catch(console.error);
+        }
+    },
+    _create: function (htm, variables = {}) {
+        const div = document.createElement('div');
+        for (let key in variables) {
+            let value = variables[key];
+            if (value == null) value = '';
+            if (isAsync(value)) htm = htm.replaceAll('{' + key + '}', `<template data-wait-for="` + key + `"></template>`);
+            else htm = htm.replaceAll('{' + key + '}', value);
+        }
+        div.innerHTML = htm;
+        return div;
+    },
     createMulti: function (htm, variables = {}) {
-        const div = document.createElement('div'), array = [];
-        for (let key in variables) htm = htm.replaceAll('{' + key + '}', variables[key] || '');
-        div.insertAdjacentHTML('afterbegin', htm);
+        const div = this._create(htm, variables), array = [];
         for (let node of div.childNodes) array.push(node);
+        for (let element of array) this._template(element, variables);
         div.remove();
         return array;
     },
@@ -18,14 +40,9 @@ const dom = {
         return element;
     },
     create: function (htm, variables = {}) {
-        const div = document.createElement('div');
-        for (let key in variables) htm = htm.replaceAll('{' + key + '}', variables[key] || '');
-        div.insertAdjacentHTML('afterbegin', htm);
-        let element = div.childNodes[0];
-        for (let node of div.childNodes) if (node.tagName != null) {
-            element = node;
-            break;
-        }
+        const div = this._create(htm, variables);
+        let element = div.firstElementChild;
+        this._template(element, variables);
         div.remove();
         return element;
     },
@@ -56,6 +73,10 @@ const dom = {
         readChildren(element.childNodes);
         return text;
     }
+}
+
+function isAsync(value) {
+    return (value != null && typeof value === 'function' && value.constructor.name === 'AsyncFunction');
 }
 
 export { dom };

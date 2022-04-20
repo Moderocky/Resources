@@ -2,10 +2,12 @@
 import {http} from './request.mjs';
 const api = '/api/git';
 
-async function gitRequest(url, vars = {}) {
-    return await http.get(api + url).then(JSON.parse);
+async function gitRequest(url) {
+    if (requests.hasOwnProperty(url)) return requests[url];
+    return requests[url] = await http.get(api + url).then(JSON.parse);
 }
 
+const requests = {};
 async function request(url, body) {
     if (url.includes('api.github')) {
         url = url.substring('https://api.github.com'.length);
@@ -46,28 +48,33 @@ class GitHub {
             data.display_name = data.name || data['login'];
             data.getRepositories = async function () {
                 try {
-                    if (data._repos != null) return data._repos;
-                    data._repos = [];
-                    for (let repo of (await request(data['repos_url']))) data._repos.push(github.internal.createRepository(repo, github));
-                    return data._repos || [];
+                    if (data._repos != null) return await data._repos;
+                    data._repos = new Promise(async resolve => {
+                        const array = [];
+                        for (let repo of (await request(data['repos_url']))) array.push(github.internal.createRepository(repo, github));
+                        resolve(array);
+                    })
+                    return await data._repos;
                 } catch (error) {
-                    return data._repos || [];
+                    console.log(error); // todo
+                    return [];
                 }
             }
             data.getLanguages = async function () {
                 try {
                     if (data._languages != null) return data._languages;
-                    data._languages = {};
+                    const object = {};
                     for (let repo of await data.getRepositories()) {
                         if (repo['fork']) continue;
                         const languages = await repo.getLanguages();
                         for (let key in languages) {
-                            if (data._languages.hasOwnProperty(key)) data._languages[key] += languages[key];
-                            else data._languages[key] = languages[key];
+                            if (object.hasOwnProperty(key)) object[key] += languages[key];
+                            else object[key] = languages[key];
                         }
                     }
-                    return data._languages || {};
+                    return data._languages = object || {};
                 } catch (error) {
+                    console.log(error); // todo
                     return data._languages || {};
                 }
             }
@@ -94,6 +101,15 @@ class GitHub {
                     return data._languages || {};
                 } catch (error) {
                     return data._languages || {};
+                }
+            }
+            data.getContributors = async function () {
+                try {
+                    if (data._members != null) return data._members;
+                    data._members = await request(data['contributors_url']);
+                    return data._members || {};
+                } catch (error) {
+                    return data._members || {};
                 }
             }
             return data;
