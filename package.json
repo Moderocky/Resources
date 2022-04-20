@@ -1,0 +1,9 @@
+{
+  "name": "resources.byteskript.org",
+  "version": "1.0.0",
+  "dependencies": {
+    "@octokit/rest": "^18.12.0",
+    "mime": "^3.0.0",
+    "octokit": "^1.7.1"
+  }
+}

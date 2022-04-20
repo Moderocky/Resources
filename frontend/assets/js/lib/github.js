@@ -1,11 +1,9 @@
 
 import {http} from './request.js';
-import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
-import {token} from "../token.js";
-const octokit = new Octokit({auth: token});
+const api = '/api/git';
 
 async function gitRequest(url, vars = {}) {
-    return await octokit.request('GET ' + url, vars);
+    return await http.get(api + url).then(JSON.parse);
 }
 
 async function request(url, body) {
