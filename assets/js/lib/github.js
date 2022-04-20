@@ -1,6 +1,5 @@
 
 import {http} from './request.js';
-import {cookie} from "./cookie.js";
 import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
 import {token} from "../token.js";
 const octokit = new Octokit({auth: token});
