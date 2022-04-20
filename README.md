@@ -3,7 +3,7 @@ Resources
 
 ### Opus #17
 
-This is the template for my web resources software, designed ByteSkript resources.
+This is the template for my web resources software, designed for ByteSkript resources.
 
 ### Description
 

@@ -89,7 +89,7 @@ function generateMarkdown(text, container) {
             if (current != null && current.childNodes.length > 0) container.appendChild(current);
             current = dom.createElement('div', 'section', 'py-6', 'px-4', 'mb-4', 'rounded-xl', 'border', 'border-gray-200', 'dark:border-gray-500');
             has = false;
-        } else if (element.tagName != null && (element.tagName === 'P' || element.tagName === 'UL' || element.tagName === 'OL')) has = true;
+        } else if (element.tagName != null && (element.tagName === 'P' || element.tagName === 'UL' || element.tagName === 'OL' || element.tagName === 'PRE' || element.tagName === 'CODE')) has = true;
         current.appendChild(element);
     }
     if (current != null) container.appendChild(current);
