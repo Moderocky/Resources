@@ -1,12 +1,29 @@
 const http = require('http');
 const system = require('fs');
 const mime = require('mime');
+const { database, Query } = require('./data');
 
 const { Octokit } = require("@octokit/rest");
 let token = system.readFileSync('token.txt', 'utf8').trim();
 const octokit = new Octokit({ auth: token });
 
-class Cache {
+// todo
+database.fetch('users')
+    .then(Query.first)
+    .then(Query.find)
+    .then(Query.value)
+    .then(user => {
+        console.log(user); // todo
+        console.log(JSON.stringify(user));
+        user['count']++;
+        user.save();
+});
+database.fetch('users', 'test?')
+    .then(Query.value)
+    .then(console.log);
+// todo
+
+class RequestCache {
     clean = new Date();
     hours = 2;
     data = {};
@@ -58,7 +75,7 @@ class Cache {
         }
     }
 }
-const cache = new Cache();
+const cache = new RequestCache();
 
 http.createServer(handle).listen(2040);
 async function handle(request, response) {
@@ -81,13 +98,16 @@ async function handle(request, response) {
 
 async function api(request, response) {
     try {
+        let data, text;
         if (request.url.startsWith('/api/git')) {
-            const data = await cache.get(request.url.substring(8));
-            response.setHeader("Content-Type", 'application/json');
-            response.writeHead(200);
-            const text = JSON.stringify(data);
-            response.write(text);
+            data = await cache.get(request.url.substring(8));
+            text = JSON.stringify(data);
+        } else if (request.url.startsWith('/api/')) {
+            text = await database.fetch(request.url.substring(5)).then(Query.text);
         }
+        response.setHeader("Content-Type", 'application/json');
+        response.writeHead(200);
+        response.write(text);
     } catch (error) {
         response.writeHead(500);
         response.write(error.toString());

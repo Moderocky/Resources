@@ -1,3 +1,6 @@
 /.idea
 *.iml
 token.txt
+
+node_modules/
+data/*

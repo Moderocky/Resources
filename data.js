@@ -71,6 +71,43 @@ class CacheMap {
 
 }
 
+class Query {
+
+    constructor(database, value, ...location) {
+        this.database = database;
+        this.location = location;
+        this.target = () => {
+            let text = location.join('/');
+            if (text.endsWith('.json')) text = text.substring(0, text.length-5);
+            return text;
+        }
+        this.getValue = () => value;
+    }
+
+    static first = (query) => query.getFirst();
+    static last = (query) => query.getLast();
+    static find = (query) => query.fetch(query.getValue());
+    static value = (query) => query.getValue();
+    static text = (query) => JSON.stringify({target: query.target(), value: query.getValue()});
+
+    async fetch(...url) {
+        return await this.database.fetch(...this.location, ...url);
+    }
+
+    async getFirst() {
+        let thing = this.getValue();
+        if (Array.isArray(thing)) thing = thing[0];
+        return new Query(database, thing, ...this.location);
+    }
+
+    async getLast() {
+        let thing = this.getValue();
+        if (Array.isArray(thing)) thing = thing[thing.length];
+        return new Query(database, thing, ...this.location);
+    }
+
+}
+
 class Database {
     constructor(path = './data') {
         this.path = path;
@@ -81,6 +118,7 @@ class Database {
 
     lock = {};
     data = { get: (name) => this[name] || (this[name] = new CacheMap(16, 200)) };
+    _list = async (path) => system.readdirSync(path, {withFileTypes: true}).filter(item => !item.isDirectory()).map(item => item.name.substring(0, item.name.lastIndexOf('.')))
     _getContent = async (path) => {
         let lock = this.lock[path] || (this.lock[path] = Promise.resolve()), promise;
         this.lock[path] = promise = lock.then(() => system.readFileSync(path));
@@ -105,11 +143,32 @@ class Database {
         let cache = this.data.get(location[1]), object;
         if (cache.has(target)) return cache.get(target);
         cache.set(target, object = await database._getContent(target).then(JSON.parse));
-        object.save = async () => database._setContent(target, JSON.stringify(object));
+        object.save = () => database._setContent(target, JSON.stringify(object));
         return object;
+    }
+
+    async fetch(...url) {
+        url = url.join('/');
+        if (url.startsWith('/')) url = url.substring(1);
+        const list = (url.endsWith('/')), check = (url.endsWith('?'));
+        if (list || check) url = url.substring(0, url.length - 1);
+        let location = url.split('/'), target = path.resolve(__dirname, this.path, ...location), value;
+        if (check) value = system.existsSync(target) || system.existsSync(target + '.json');
+        else if (system.existsSync(target)) value = await this._list(target);
+        else if (!list && system.existsSync(target + '.json')) value = await this.getObject(...((location[location.length-1] = location[location.length-1] + '.json') && location));
+        else value = check ? false : null;
+        return new Query(this, value, ...location);
+    }
+
+    async delete(...url) {
+        url = url.join('/');
+        if (url.startsWith('/')) url = url.substring(1);
+        if (url.endsWith('/')) url = url.substring(0, url.length-1);
+        let location = url.split('/'), target = path.resolve(__dirname, this.path, ...location);
+        if (system.existsSync(target + '.json')) system.rmSync(target + '.json');
     }
 
 }
 
-const data = new Database();
-module.exports = data;
+const database = new Database();
+module.exports = {database, Query};
