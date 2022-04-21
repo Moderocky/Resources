@@ -1,6 +1,7 @@
 /.idea
 *.iml
 token.txt
+package-lock.json
 
 node_modules/
 data/*
