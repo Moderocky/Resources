@@ -18,7 +18,7 @@ const http = {
         return request;
     },
     post: async function (url, content, headers = {}) {
-        return await this.postRaw(url, content, headers);
+        return this.postRaw(url, content, headers).then(response => response.text());
     },
     postRaw: async function (url, content, headers = {}) {
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -31,12 +31,13 @@ const http = {
     get: async function (url, content, headers = {}) {
         return this.getRaw(url, content, headers).then(response => response.text());
     },
-    getRaw: async function (url, content, headers = {}) {
+    getRaw: async function (url, content, headers = {}, mode = 'cors') {
         let tail = '';
         if (content != null) tail = '?' + this.formEncode(content);
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
         return await fetch(url + tail, {
             method: 'GET',
+            mode: mode,
             headers: headers
         });
     }

@@ -1,4 +1,4 @@
-Resources
+Syzygy
 =====
 
 ### Opus #17
@@ -8,6 +8,7 @@ This is the template for my web resources software, designed for ByteSkript reso
 ### Description
 
 This displays resources, hosted on GitHub, in a pretty web format designed to resemble the common 'XenForo' resources marketplaces.
+Separate functionality, such as comments, reviews, votes and additional pages, are provided by the `node.js` backend layer.
 
 Most details are extracted directly from a GitHub repository via the GitHub API.
 Octokit is set to auth using a token. Ideally, this will be a read-only token generated for the application.
@@ -26,6 +27,8 @@ This should be sufficient to avoid the 5000/hour rate-limit of a standard GitHub
 
 In the future, the browser will attempt direct requests first until the user's personal 60/hour rate-limit is exceeded.
 This will reduce the load on the cache from bots and blithe (click-through) requests.
+
+User accounts are handled entirely through GitHub, with no passwords or sensitive data stored.
 
 ### Local Libraries
 

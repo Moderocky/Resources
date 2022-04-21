@@ -1,27 +1,16 @@
 const http = require('http');
 const system = require('fs');
 const mime = require('mime');
+const querystring = require('querystring');
+const {fetch} = require('cross-fetch');
+
 const { database, Query } = require('./data');
 
 const { Octokit } = require("@octokit/rest");
 let token = system.readFileSync('token.txt', 'utf8').trim();
+let secret = system.readFileSync('secret.txt', 'utf8').trim();
 const octokit = new Octokit({ auth: token });
-
-// todo
-database.fetch('users')
-    .then(Query.first)
-    .then(Query.find)
-    .then(Query.value)
-    .then(user => {
-        console.log(user); // todo
-        console.log(JSON.stringify(user));
-        user['count']++;
-        user.save();
-});
-database.fetch('users', 'test?')
-    .then(Query.value)
-    .then(console.log);
-// todo
+const usercache = {};
 
 class RequestCache {
     clean = new Date();
@@ -79,7 +68,9 @@ const cache = new RequestCache();
 
 http.createServer(handle).listen(2040);
 async function handle(request, response) {
-    if (request.url.startsWith('/api')) {
+    if (request.url.startsWith('/login')) {
+        await login(request, response);
+    } else if (request.url.startsWith('/api')) {
         await api(request, response);
     } else {
         try {
@@ -92,11 +83,58 @@ async function handle(request, response) {
             response.writeHead(404);
             response.write(err.toString());
         }
+        response.end();
     }
-    response.end();
 }
 
-async function api(request, response) {
+async function login (request, response) {
+    response.writeHead(200);
+    if (request.url.includes('?')) {
+        const query = querystring.decode(request.url.substring(request.url.indexOf('?') + 1));
+        let index = query.state.indexOf('->');
+        const session = query.state.substring(0, index), exit = query.state.substring(index + 2);
+        const user = {
+            id: null,
+            _id: null,
+            octokit: null,
+            ...await fetch('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                body: formEncode({client_id: 'Iv1.5b5f5c814012e08f', client_secret: secret, code: query.code}),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).then(thing => thing.text()).then(querystring.decode)
+        }
+        user['octokit'] = () => new Octokit({auth: user.access_token});
+        user.id = async () => {
+            if (user._id != null) return user._id;
+            let text = user.octokit().request('GET /user').then(result => result.data.id);
+            return user._id = text;
+        };
+        usercache[session] = user;
+        response.write(`<script>window.location = '`+exit+`';</script>`);
+        response.end();
+    } else {
+        if (request.method === 'POST') {
+            const buffers = [];
+            for await (const chunk of request) buffers.push(chunk);
+            const data = Buffer.concat(buffers).toString();
+            try {
+                const user = usercache[querystring.parse(data).session];
+                response.write('{"user": ' + await user.id() + '}');
+            } catch (error) {
+                response.write('{"user": null}');
+            }
+            response.end();
+        } else {
+            response.write(`<script type="module">
+                import {login} from "./assets/js/lib/login.mjs";
+                login('http://localhost:2040/test.html').then(); // todo
+            </script>`);
+            response.end();
+        }
+    }
+}
+
+async function api (request, response) {
     try {
         let data, text;
         if (request.url.startsWith('/api/git')) {
@@ -111,5 +149,24 @@ async function api(request, response) {
     } catch (error) {
         response.writeHead(500);
         response.write(error.toString());
+    }
+    response.end();
+}
+
+async function readBody(request, handler) {
+    let body = '';
+    request.on('data', function (data) {
+        body += data;
+        if (body.length > 10000000) request.connection.destroy();
+    });
+    request.on('end', () => handler(body, request));
+}
+
+function formEncode(content) {
+    if (content instanceof String) return content;
+    else {
+        const array = [];
+        for (const key in content) if (content.hasOwnProperty(key)) array.push(key + '=' + encodeURI(content[key]));
+        return array.join('&');
     }
 }
