@@ -9,7 +9,7 @@ class Language {
 
     async matches(repository) {
         const languages = await repository.getLanguages();
-        return languages.includes(this.name);
+        return languages.hasOwnProperty(this.name);
     }
 
 }

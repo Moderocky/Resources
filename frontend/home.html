@@ -76,7 +76,7 @@
     <section data-resources>
         <div class="w-full select-none m-2 mx-auto flex flex-auto justify-center items-center content-center">
             <button data-page-prev class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-left-long my-auto"></i></button>
-            <div class="mx-4 p-3 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>0</span></div>
+            <div class="mx-4 p-3 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>1</span></div>
             <button data-page-next class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-right-long my-auto"></i></button>
         </div>
         <div data-content class="flex flex-wrap">
@@ -88,7 +88,7 @@
             import {lang} from "./assets/js/blocks/lang_card.mjs";
             import {wait} from "./assets/js/lib/wait.mjs";
             import {similarity} from "./assets/js/lib/similar.mjs";
-            import {getLanguages} from "./assets/js/lib/languages.mjs";
+            import {getLanguage, getLanguages} from "./assets/js/lib/languages.mjs";
             const resources = {
                 current_page: 0,
                 per_page: 6,
@@ -97,12 +97,14 @@
                 area: document.querySelector('section[data-resources]'),
                 section: document.querySelector('section[data-resources] div[data-content]'),
                 data: [],
+                list: [],
                 languages: [],
                 finished: false,
                 get: () => {},
                 display: (repositories) => {},
                 sortBy: (key) => {},
-                search: (keyword) => {}
+                search: (keyword) => {},
+                getBy: (language) => {}
             }
             const buttons = {
                 prev: resources.area.querySelector('div button[data-page-prev]'),
@@ -119,20 +121,20 @@
                 let page = resources.current_page;
                 resources.current_page = Math.max(0, resources.current_page - 1);
                 if (resources.current_page === page) return;
-                buttons.number.innerText = resources.current_page;
+                buttons.number.innerText = resources.current_page + 1;
                 resources.display();
             };
             buttons.next.onclick = async () => {
                 let page = resources.current_page;
                 resources.current_page = Math.min(resources.max_page, resources.current_page + 1);
                 if (resources.current_page === page) return;
-                buttons.number.innerText = resources.current_page;
+                buttons.number.innerText = resources.current_page + 1;
                 resources.display();
             };
             resources.search = async (keyword) => {
                 if (!resources.enabled) return;
                 resources.enabled = false;
-                let array = await resources.get();
+                let array = await resources.get(true);
                 array = array.filter(repository => {
                     for (let topic of repository.topics || []) {
                         if (topic === keyword) return true;
@@ -149,23 +151,28 @@
                 if (!resources.enabled) return;
                 resources.enabled = false;
                 resources.current_page = 0;
-                buttons.number.innerText = resources.current_page;
+                buttons.number.innerText = resources.current_page + 1;
                 switch (key) {
                     case 'language':
                         await displayLanguageCards();
                         resources.enabled = true;
                         return;
                     case 'popular':
-                        resources.data = resources.data.sort((a, b) => b.stargazers_count - a.stargazers_count);
+
+                        (await resources.get(true)).sort((a, b) => b.stargazers_count - a.stargazers_count);
                         break;
-                    default: resources.data = resources.data.sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
+                    default: (await resources.get(true)).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
                 }
                 resources.display();
                 await wait(300);
                 resources.enabled = true;
             };
             resources.get = async (clear = false) => {
-                if (resources.finished) return [...resources.data];
+                if (resources.finished) {
+                    if (clear) resources.list = [...resources.data];
+                    resources.max_page = Math.floor(resources.list.length / resources.per_page);
+                    return resources.list;
+                }
                 resources.enabled = false;
                 resources.data.push(...await github.getUser(72931234).then(user => user.getRepositories()));
                 resources.data.push(...await github.getUser(14147477).then(user => user.getRepositories()));
@@ -177,7 +184,7 @@
                 });
                 resources.finished = true;
                 resources.enabled = true;
-                return [...resources.data];
+                return resources.list = [...resources.data];
             };
             resources.display = async function (repositories) {
                 resources.section.innerHTML = null;
@@ -193,12 +200,37 @@
                     node.classList.remove('opacity-0');
                 }
             };
+            resources.getBy = async function (language) {
+                if (!resources.enabled) return;
+                resources.enabled = false;
+                resources.current_page = 0;
+                buttons.number.innerText = '1';
+                let repositories = await resources.get(true);
+                const lang = getLanguage(language);
+                let array = [];
+                try {
+                    for (let repository of repositories) {
+                        if (!await lang.matches(repository)) continue;
+                        repository.languages = await repository.getLanguages();
+                        array.push(repository)
+                    }
+                    array = array.sort((a, b) => (b.languages[language] || 0) - (a.languages[language] || 0));
+                } catch (error) {console.log(error)}
+                resources.list = array;
+                resources.display();
+                await wait(300);
+                resources.enabled = true;
+            }
             async function displayLanguageCards() {
                 resources.section.innerHTML = null;
                 const array = [];
                 for (let language of getLanguages()) array.push(language.name);
                 for (let language of resources.languages) array.includes(language) || array.push(language);
-                for (let language of array) resources.section.appendChild(lang(language));
+                for (let language of array) {
+                    const card = lang(language);
+                    resources.section.appendChild(card);
+                    card.onclick = () => resources.getBy(language);
+                }
                 for (let node of resources.section.childNodes) {
                     if (node.tagName == null) continue;
                     await wait(50);
