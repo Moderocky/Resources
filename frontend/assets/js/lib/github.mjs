@@ -113,6 +113,15 @@ class GitHub {
                     return data._members || {};
                 }
             }
+            data.getContents = async function () {
+                try {
+                    if (data._contents != null) return data._contents;
+                    data._contents = await request(data['url'] + '/contents');
+                    return data._contents || [];
+                } catch (error) {
+                    return data._contents || [];
+                }
+            }
             return data;
         }
     }

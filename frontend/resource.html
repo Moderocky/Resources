@@ -27,70 +27,12 @@
     <link href="assets/css/style.css" rel="stylesheet"/>
 </head>
 <body class="dark:bg-gray-800 dark:text-gray-300 opacity-0 transition-opacity">
-<div class="mt-20 mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
-    <section class="menu flex flex-auto justify-center content-center">
-        <div class="my-auto mr-auto h-full p-4 select-none flex flex-col">
-            <h2 class="h-[1.75rem] text-lg text-slate-300 dark:text-gray-500"><i class="fa-solid fa-music"></i>.bsk</h2>
-            <h1 class="text-5xl text-slate-900 dark:text-gray-50 transition duration-300"><span class="hover:text-slate-700 hover:dark:text-gray-200">Sy</span><span class="hover:text-slate-700 hover:dark:text-gray-200">zy</span><span class="hover:text-slate-700 hover:dark:text-gray-200">gy</span></h1>
-            <h2 class="h-[1.75rem]"></h2>
-        </div>
-        <div class="select-none">
-            <div class="my-8 px-6 flex flex-wrap justify-center items-center 2xl:container py-1 lg:py-2.5">
-                <div onclick="window.location.href = '/home'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[35deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-red-500 to-rose-400 w-full h-full -rotate-45 xl:-rotate-[35deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Home" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-house"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location.href = '/about'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[40deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-orange-500 to-amber-400 w-full h-full -rotate-45 xl:-rotate-[40deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="About" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-book"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location.href = '/profile'" class="m-4 xl:mt-0 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-green-500 to-emerald-400 w-full h-full -rotate-45 xl:-rotate-45 hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Profile" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-id-badge"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location = 'https://github.com/Moderocky/Syzygy'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[50deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-sky-500 to-cyan-400 w-full h-full -rotate-45 xl:-rotate-[50deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Source" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-code-branch"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location = 'https://byteskript.org/'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[55deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-indigo-500 to-violet-400 w-full h-full -rotate-45 xl:-rotate-[55deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="ByteSkript" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-music"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="my-auto ml-auto p-4 select-none">
-            <button type="button" aria-label="Log in" class="group h-12 px-6 border-2 border-gray-600 dark:border-gray-300 rounded-full transition duration-300
- hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-                <p class="relative flex items-center space-x-4 justify-center text-lg text-gray-700 dark:text-gray-300 transition duration-300 group-hover:text-blue-600">
-                    <i class="fa-brands fa-github"></i> <span class="block w-max font-semibold tracking-wide sm:text-base">Log In</span>
-                </p>
-            </button>
-        </div>
+<div class="mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
+    <section data-header>
+        <script type="module">
+            import {header} from "./assets/js/blocks/header.mjs";
+            document.querySelector('section[data-header]').replaceWith(header);
+        </script>
     </section>
     <div class="">
         <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container border-b py-1 lg:py-2.5">
@@ -121,8 +63,8 @@
         </div>
     </div>
     <div class="px-4 2xl:container">
-        <div class="container lg:my-2 flex flex-wrap">
-            <div class="w-full lg:w-4/12 2xl:w-3/12 p-2">
+        <div class="w-full lg:my-2 flex flex-wrap">
+            <div class="w-full md:w-4/12 2xl:w-3/12 p-2">
                 <div class="h-full p-4 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Author</h5>
                     <div class="text-md text-white text-lg flex space-x-2 my-2 rounded-lg border-2 dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
@@ -136,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full lg:w-8/12 2xl:w-9/12 p-2">
+            <div class="w-full md:w-8/12 2xl:w-9/12 p-2">
                 <div class="h-full p-4 space-y-4 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Contributors</h5>
                     <div class="flex flex-wrap" data-display-contributors>
@@ -147,7 +89,7 @@
         </div>
     </div>
     <div class="px-4 2xl:container">
-        <div class="container lg:my-2 flex flex-wrap">
+        <div class="w-full lg:my-2 flex flex-wrap">
             <div class="w-full p-2 fancy-scroll">
                 <div class="w-full flex items-center space-x-4 overflow-y-auto whitespace-nowrap">
                     <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
@@ -331,7 +273,6 @@
                                         else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
                                         else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
                                         else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
-                                        else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
                                         else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
                                     }
                                 }).catch(console.error);

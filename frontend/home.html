@@ -18,87 +18,31 @@
 </head>
 <body class="dark:bg-gray-800 dark:text-gray-300 opacity-0 transition-opacity">
 <div class="mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
-    <section class="menu flex flex-auto justify-center content-center">
-        <div class="my-auto mr-auto h-full p-4 select-none flex flex-col">
-            <h2 class="h-[1.75rem] text-lg text-slate-300 dark:text-gray-500"><i class="fa-solid fa-music"></i>.bsk</h2>
-            <h1 class="text-5xl text-slate-900 dark:text-gray-50 transition duration-300"><span class="hover:text-slate-700 hover:dark:text-gray-200">Sy</span><span class="hover:text-slate-700 hover:dark:text-gray-200">zy</span><span class="hover:text-slate-700 hover:dark:text-gray-200">gy</span></h1>
-            <h2 class="h-[1.75rem]"></h2>
-        </div>
-        <div class="select-none">
-            <div class="my-8 px-6 flex flex-wrap justify-center items-center 2xl:container py-1 lg:py-2.5">
-                <div onclick="window.location.href = '/home'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[35deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-red-500 to-rose-400 w-full h-full -rotate-45 xl:-rotate-[35deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Home" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-house"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location.href = '/about'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[40deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-orange-500 to-amber-400 w-full h-full -rotate-45 xl:-rotate-[40deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="About" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-book"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location.href = '/profile'" class="m-4 xl:mt-0 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-green-500 to-emerald-400 w-full h-full -rotate-45 xl:-rotate-45 hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Profile" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-id-badge"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location = 'https://github.com/Moderocky/Syzygy'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[50deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-sky-500 to-cyan-400 w-full h-full -rotate-45 xl:-rotate-[50deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="Source" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-code-branch"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-                <div onclick="window.location = 'https://byteskript.org/'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[55deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
-                    <div class="flex flex-auto items-center bg-gradient-to-r from-indigo-500 to-violet-400 w-full h-full -rotate-45 xl:-rotate-[55deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
-                        <div class="my-auto mx-auto items-center">
-                            <h2 aria-label="ByteSkript" class="px-4 uppercase text-white text-2xl">
-                                <i class="fa-solid fa-music"></i>
-                            </h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="my-auto ml-auto p-4 select-none">
-            <button type="button" aria-label="Log in" class="group h-12 px-6 border-2 border-gray-600 dark:border-gray-300 rounded-full transition duration-300
- hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-                <p class="relative flex items-center space-x-4 justify-center text-lg text-gray-700 dark:text-gray-300 transition duration-300 group-hover:text-blue-600">
-                    <i class="fa-brands fa-github"></i> <span class="block w-max font-semibold tracking-wide sm:text-base">Log In</span>
-                </p>
-            </button>
-        </div>
+    <section data-header>
+        <script type="module">
+            import {header} from "./assets/js/blocks/header.mjs";
+            document.querySelector('section[data-header]').replaceWith(header);
+        </script>
     </section>
     <section>
         <div class="flex flex-wrap justify-between items-center content-center">
-            <div class="m-4 mx-auto flex flex-auto justify-centre">
+            <div class="sm:p-4 w-full md:w-8/12">
 <!--                <h2 class="text-3xl font-light mx-4 small-caps">Resources</h2>-->
             </div>
-            <div class="m-4 mx-auto">
-                <label class="p-4 space-x-2 rounded-full border focus:border-sky-500 transition">
-                    <i class="fa fa-search"></i>
-                    <input placeholder="Search" class="bg-inherit focus:outline-none">
-                </label>
+            <div class="p-2 w-full md:w-4/12">
+                <div class="p-3 w-full text-lg rounded-full border focus:border-sky-500 transition">
+                    <label class="flex flex-auto space-x-2">
+                        <i class="fa fa-search my-auto"></i>
+                        <input data-search-resources placeholder="Search" class="w-[90%] bg-inherit focus:outline-none" />
+                    </label>
+                </div>
             </div>
         </div>
     </section>
     <section>
         <div class="flex flex-wrap w-full">
-            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+            <div data-sort-by="recent" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl  p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Recent</h4>
@@ -107,8 +51,8 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+            <div data-sort-by="popular" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Popular</h4>
@@ -117,12 +61,12 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+            <div data-sort-by="language" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
-                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Category</h4>
-                            <p class="text-gray-600 dark:text-gray-400">List the main resource categories.</p>
+                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Language</h4>
+                            <p class="text-gray-600 dark:text-gray-400">Find resources by language.</p>
                         </div>
                     </div>
                 </div>
@@ -131,9 +75,9 @@
     </section>
     <section data-resources>
         <div class="w-full select-none m-2 mx-auto flex flex-auto justify-center items-center content-center">
-            <button data-page-prev class="p-3 px-5 cursor-pointer rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-left-long my-auto"></i></button>
-            <div class="mx-4 p-3 rounded-xl bg-white bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>0</span></div>
-            <button data-page-next class="p-3 px-5 cursor-pointer rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-right-long my-auto"></i></button>
+            <button data-page-prev class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-left-long my-auto"></i></button>
+            <div class="mx-4 p-3 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>0</span></div>
+            <button data-page-next class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-right-long my-auto"></i></button>
         </div>
         <div data-content class="flex flex-wrap">
 
@@ -141,22 +85,35 @@
         <script type="module">
             import {github} from "./assets/js/home.mjs";
             import {card} from "./assets/js/blocks/repo_card.mjs";
+            import {lang} from "./assets/js/blocks/lang_card.mjs";
             import {wait} from "./assets/js/lib/wait.mjs";
+            import {similarity} from "./assets/js/lib/similar.mjs";
+            import {getLanguages} from "./assets/js/lib/languages.mjs";
             const resources = {
                 current_page: 0,
                 per_page: 6,
                 max_page: 0,
+                enabled: true,
                 area: document.querySelector('section[data-resources]'),
                 section: document.querySelector('section[data-resources] div[data-content]'),
                 data: [],
+                languages: [],
                 finished: false,
-                get: null,
-                display: null
+                get: () => {},
+                display: (repositories) => {},
+                sortBy: (key) => {},
+                search: (keyword) => {}
             }
             const buttons = {
                 prev: resources.area.querySelector('div button[data-page-prev]'),
                 next: resources.area.querySelector('div button[data-page-next]'),
                 number: resources.area.querySelector('span[data-page-number]')
+            }
+            for (let element of document.querySelectorAll('[data-sort-by]')) {
+                element.onclick = () => resources.sortBy(element.dataset.sortBy);
+            }
+            document.querySelector('input[data-search-resources]').onchange = (event) => {
+                resources.search(event.target.value);
             }
             buttons.prev.onclick = async () => {
                 let page = resources.current_page;
@@ -172,33 +129,82 @@
                 buttons.number.innerText = resources.current_page;
                 resources.display();
             };
-            resources.get = async () => {
+            resources.search = async (keyword) => {
+                if (!resources.enabled) return;
+                resources.enabled = false;
+                let array = await resources.get();
+                array = array.filter(repository => {
+                    for (let topic of repository.topics || []) {
+                        if (topic === keyword) return true;
+                        if (similarity(keyword, topic) > 0.7) return true;
+                    }
+                    return false;
+                });
+                resources.current_page = 0;
+                resources.display(array);
+                await wait(300);
+                resources.enabled = true;
+            };
+            resources.sortBy = async (key) => {
+                if (!resources.enabled) return;
+                resources.enabled = false;
+                resources.current_page = 0;
+                buttons.number.innerText = resources.current_page;
+                switch (key) {
+                    case 'language':
+                        await displayLanguageCards();
+                        resources.enabled = true;
+                        return;
+                    case 'popular':
+                        resources.data = resources.data.sort((a, b) => b.stargazers_count - a.stargazers_count);
+                        break;
+                    default: resources.data = resources.data.sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
+                }
+                resources.display();
+                await wait(300);
+                resources.enabled = true;
+            };
+            resources.get = async (clear = false) => {
                 if (resources.finished) return [...resources.data];
+                resources.enabled = false;
                 resources.data.push(...await github.getUser(72931234).then(user => user.getRepositories()));
                 resources.data.push(...await github.getUser(14147477).then(user => user.getRepositories()));
+                resources.data.push(...await github.getUser(29044720).then(user => user.getRepositories()));
                 resources.data = resources.data.filter(repo => repo && !repo.fork);
                 resources.max_page = Math.floor(resources.data.length / resources.per_page);
+                for (let datum of resources.data) datum.getLanguages().then(languages => {
+                    for (let language in languages) if (!resources.languages.includes(language)) resources.languages.push(language);
+                });
                 resources.finished = true;
+                resources.enabled = true;
                 return [...resources.data];
             };
-            resources.display = async function () {
+            resources.display = async function (repositories) {
                 resources.section.innerHTML = null;
-                resources.get().then(async repositories => {
-                    repositories = [...repositories].filter(repo => repo && !repo.fork);
-                    repositories.sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
-                    repositories = repositories.slice(resources.per_page*resources.current_page, (resources.per_page*(resources.current_page+1)));
-                    for (let repository of repositories) {
-                        const box = card({...repository, owner_avatar_url: repository.owner.avatar_url, owner_login: repository.owner.login});
-                        resources.section.appendChild(box);
-                    }
-                }).then(async () => {
-                    for (let node of resources.section.childNodes) {
-                        if (node.tagName == null) continue;
-                        await wait(50);
-                        node.classList.remove('opacity-0');
-                    }
-                });
+                if (repositories == null) repositories = await resources.get();
+                repositories = repositories.slice(resources.per_page*resources.current_page, (resources.per_page*(resources.current_page+1)));
+                for (let repository of repositories) {
+                    const box = card({...repository, owner_avatar_url: repository.owner.avatar_url, owner_login: repository.owner.login});
+                    resources.section.appendChild(box);
+                }
+                for (let node of resources.section.childNodes) {
+                    if (node.tagName == null) continue;
+                    await wait(50);
+                    node.classList.remove('opacity-0');
+                }
             };
+            async function displayLanguageCards() {
+                resources.section.innerHTML = null;
+                const array = [];
+                for (let language of getLanguages()) array.push(language.name);
+                for (let language of resources.languages) array.includes(language) || array.push(language);
+                for (let language of array) resources.section.appendChild(lang(language));
+                for (let node of resources.section.childNodes) {
+                    if (node.tagName == null) continue;
+                    await wait(50);
+                    node.classList.remove('opacity-0');
+                }
+            }
             resources.display();
         </script>
     </section>
