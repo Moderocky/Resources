@@ -82,12 +82,12 @@ for (const element of document.querySelectorAll('[data-version-history]')) {
 function generateMarkdown(text, container) {
     const htm = marked.parse(text);
     const elements = dom.createMulti(htm);
-    let current = dom.createElement('div', 'section', 'py-6', 'px-4', 'mb-4', 'rounded-xl', 'border', 'border-gray-200', 'dark:border-gray-500');
+    let current = dom.createElement('div', 'section', 'py-6', 'px-4', 'mb-4', 'rounded-xl', 'bg-white', 'bg-opacity-10', 'shadow-xl');
     let has = false;
     for (let element of elements) {
         if (element.tagName != null && element.tagName.startsWith('H') && has === true) {
             if (current != null && current.childNodes.length > 0) container.appendChild(current);
-            current = dom.createElement('div', 'section', 'py-6', 'px-4', 'mb-4', 'rounded-xl', 'border', 'border-gray-200', 'dark:border-gray-500');
+            current = dom.createElement('div', 'section', 'py-6', 'px-4', 'mb-4', 'rounded-xl', 'bg-white', 'bg-opacity-10', 'shadow-xl');
             has = false;
         } else if (element.tagName != null && (element.tagName === 'P' || element.tagName === 'UL' || element.tagName === 'OL' || element.tagName === 'PRE' || element.tagName === 'CODE')) has = true;
         current.appendChild(element);

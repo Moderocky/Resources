@@ -26,7 +26,7 @@
         </div>
         <div class="select-none">
             <div class="my-8 px-6 flex flex-wrap justify-center items-center 2xl:container py-1 lg:py-2.5">
-                <div class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[35deg] overflow-hidden hover:rotate-0 transition duration-300">
+                <div onclick="window.location.href = '/home'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[35deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-red-500 to-rose-400 w-full h-full -rotate-45 xl:-rotate-[35deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="Home" class="px-4 uppercase text-white text-2xl">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[40deg] overflow-hidden hover:rotate-0 transition duration-300">
+                <div onclick="window.location.href = '/about'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[40deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-orange-500 to-amber-400 w-full h-full -rotate-45 xl:-rotate-[40deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="About" class="px-4 uppercase text-white text-2xl">
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="m-4 xl:mt-0 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300">
+                <div onclick="window.location.href = '/profile'" class="m-4 xl:mt-0 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-green-500 to-emerald-400 w-full h-full -rotate-45 xl:-rotate-45 hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="Profile" class="px-4 uppercase text-white text-2xl">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[50deg] overflow-hidden hover:rotate-0 transition duration-300">
+                <div onclick="window.location = 'https://github.com/Moderocky/Syzygy'" class="m-4 xl:mt-2.5 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[50deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-sky-500 to-cyan-400 w-full h-full -rotate-45 xl:-rotate-[50deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="Source" class="px-4 uppercase text-white text-2xl">
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[55deg] overflow-hidden hover:rotate-0 transition duration-300">
+                <div onclick="window.location = 'https://byteskript.org/'" class="m-4 xl:mt-8 cursor-pointer w-20 h-20 rounded-[1rem] rotate-45 xl:rotate-[55deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-indigo-500 to-violet-400 w-full h-full -rotate-45 xl:-rotate-[55deg] hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="ByteSkript" class="px-4 uppercase text-white text-2xl">
@@ -85,7 +85,7 @@
     <section>
         <div class="flex flex-wrap justify-between items-center content-center">
             <div class="m-4 mx-auto flex flex-auto justify-centre">
-                <i class="fa-solid fa-arrow-left-long my-auto rounded-full p-2 mr-2 bg-gradient-to-r from-red-500 to-rose-400"></i> <h2 class="text-3xl font-light">Recent Resources</h2> <i class="fa-solid fa-arrow-right-long my-auto rounded-full p-2 ml-2 bg-gradient-to-r from-blue-500 to-indigo-400"></i>
+<!--                <h2 class="text-3xl font-light mx-4 small-caps">Resources</h2>-->
             </div>
             <div class="m-4 mx-auto">
                 <label class="p-4 space-x-2 rounded-full border focus:border-sky-500 transition">
@@ -95,17 +95,111 @@
             </div>
         </div>
     </section>
-    <section data-resources class="flex flex-wrap">
+    <section>
+        <div class="flex flex-wrap w-full">
+            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+                    <div class="space-y-2 flex flex-col h-full justify-between">
+                        <div class="space-y-4">
+                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Recent</h4>
+                            <p class="text-gray-600 dark:text-gray-400">Search the most recently-posted resources.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+                    <div class="space-y-2 flex flex-col h-full justify-between">
+                        <div class="space-y-4">
+                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Popular</h4>
+                            <p class="text-gray-600 dark:text-gray-400">Search well-known resources by their star count.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
+                <div class="rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25 p-6 h-full">
+                    <div class="space-y-2 flex flex-col h-full justify-between">
+                        <div class="space-y-4">
+                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Category</h4>
+                            <p class="text-gray-600 dark:text-gray-400">List the main resource categories.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section data-resources>
+        <div class="w-full select-none m-2 mx-auto flex flex-auto justify-center items-center content-center">
+            <button data-page-prev class="p-3 px-5 cursor-pointer rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-left-long my-auto"></i></button>
+            <div class="mx-4 p-3 rounded-xl bg-white bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>0</span></div>
+            <button data-page-next class="p-3 px-5 cursor-pointer rounded-xl bg-white bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-right-long my-auto"></i></button>
+        </div>
+        <div data-content class="flex flex-wrap">
+
+        </div>
         <script type="module">
             import {github} from "./assets/js/home.mjs";
             import {card} from "./assets/js/blocks/repo_card.mjs";
-            const section = document.querySelector('section[data-resources]');
-            github.getUser(72931234)
-                .then(user => user.getRepositories().then(
-                    repositories => {
-                        for (let repository of repositories) !repository.fork && section.appendChild(card({...repository, owner_avatar_url: user.avatar_url, owner_login: user.login}));
-                    }));
-
+            import {wait} from "./assets/js/lib/wait.mjs";
+            const resources = {
+                current_page: 0,
+                per_page: 6,
+                max_page: 0,
+                area: document.querySelector('section[data-resources]'),
+                section: document.querySelector('section[data-resources] div[data-content]'),
+                data: [],
+                finished: false,
+                get: null,
+                display: null
+            }
+            const buttons = {
+                prev: resources.area.querySelector('div button[data-page-prev]'),
+                next: resources.area.querySelector('div button[data-page-next]'),
+                number: resources.area.querySelector('span[data-page-number]')
+            }
+            buttons.prev.onclick = async () => {
+                let page = resources.current_page;
+                resources.current_page = Math.max(0, resources.current_page - 1);
+                if (resources.current_page === page) return;
+                buttons.number.innerText = resources.current_page;
+                resources.display();
+            };
+            buttons.next.onclick = async () => {
+                let page = resources.current_page;
+                resources.current_page = Math.min(resources.max_page, resources.current_page + 1);
+                if (resources.current_page === page) return;
+                buttons.number.innerText = resources.current_page;
+                resources.display();
+            };
+            resources.get = async () => {
+                if (resources.finished) return [...resources.data];
+                resources.data.push(...await github.getUser(72931234).then(user => user.getRepositories()));
+                resources.data.push(...await github.getUser(14147477).then(user => user.getRepositories()));
+                resources.data = resources.data.filter(repo => repo && !repo.fork);
+                resources.max_page = Math.floor(resources.data.length / resources.per_page);
+                resources.finished = true;
+                return [...resources.data];
+            };
+            resources.display = async function () {
+                resources.section.innerHTML = null;
+                resources.get().then(async repositories => {
+                    repositories = [...repositories].filter(repo => repo && !repo.fork);
+                    repositories.sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
+                    repositories = repositories.slice(resources.per_page*resources.current_page, (resources.per_page*(resources.current_page+1)));
+                    for (let repository of repositories) {
+                        const box = card({...repository, owner_avatar_url: repository.owner.avatar_url, owner_login: repository.owner.login});
+                        resources.section.appendChild(box);
+                    }
+                }).then(async () => {
+                    for (let node of resources.section.childNodes) {
+                        if (node.tagName == null) continue;
+                        await wait(50);
+                        node.classList.remove('opacity-0');
+                    }
+                });
+            };
+            resources.display();
         </script>
     </section>
 </div>
