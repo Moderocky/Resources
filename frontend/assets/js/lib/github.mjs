@@ -9,12 +9,12 @@ async function gitRequest(url) {
 
 const requests = {};
 async function request(url, body) {
-    if (url.includes('api.github')) {
+    if (url && url.includes('api.github')) {
         url = url.substring('https://api.github.com'.length);
         const result = await gitRequest(url);
         return result.data;
-    } else {
-        return JSON.parse(await http.get(url, body));
+    } else if (url) {
+        return JSON.parse(await http.get(url, body)).data;
     }
 }
 
@@ -24,6 +24,7 @@ class GitHub {
     repository = null;
 
     constructor(link) {
+        if (link == null) return;
         if (link.endsWith('/')) this.url = link;
         else this.url = link + '/';
         try {
@@ -53,7 +54,7 @@ class GitHub {
                         const array = [];
                         for (let repo of (await request(data['repos_url']))) array.push(github.internal.createRepository(repo, github));
                         resolve(array);
-                    })
+                    });
                     return await data._repos;
                 } catch (error) {
                     console.log(error); // todo
@@ -124,6 +125,15 @@ class GitHub {
         if (this.repository != null) return this.repository;
         if (this.url.endsWith('/')) return this.repository = this.internal.createRepository((await request(this.url.substring(0, this.url.length - 1))), this);
         else return this.repository = this.internal.createRepository((await request(this.url)), this);
+    }
+
+    async getUser(id) {
+        if (id instanceof String && !/^\d+$/g.test(id)) return this.internal.createUser((await request(api + '/users/' + id)), this);
+        else return this.internal.createUser((await request(api + '/user/' + id)), this);
+    }
+
+    async getUserByName(name) {
+        return this.internal.createUser((await request(api + '/users/' + name)), this);
     }
 
     async getFile(name) {

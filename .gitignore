@@ -7,3 +7,5 @@ node_modules/
 data/*
 
 secret.txt
+
+.DS_Store

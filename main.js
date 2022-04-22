@@ -74,16 +74,27 @@ async function handle(request, response) {
         await api(request, response);
     } else {
         try {
-            const link = 'frontend' + request.url.split(/[?#]/)[0];
-            const data = system.readFileSync(link, 'utf8');
-            response.setHeader("Content-Type", mime.getType(link));
-            response.writeHead(200);
+            const data = getFrontendFile(request.url, response);
             response.write(data);
-        } catch (err) {
-            response.writeHead(404);
-            response.write(err.toString());
+        } catch (error) {
+            response.writeHead(500);
+            response.write(error.toString());
         }
         response.end();
+    }
+}
+
+function getFrontendFile(url, response) {
+    let link = 'frontend' + url.split(/[?#]/)[0];
+    if (link.indexOf('.') < 0) link = link + '.html';
+    if (system.existsSync(link)) {
+        const data = system.readFileSync(link, 'utf8');
+        response.setHeader("Content-Type", mime.getType(link));
+        response.writeHead(200);
+        return data;
+    } else {
+        response.writeHead(404);
+        return 'Page not found.';
     }
 }
 
@@ -147,19 +158,11 @@ async function api (request, response) {
         response.writeHead(200);
         response.write(text);
     } catch (error) {
+        console.log(error);
         response.writeHead(500);
         response.write(error.toString());
     }
     response.end();
-}
-
-async function readBody(request, handler) {
-    let body = '';
-    request.on('data', function (data) {
-        body += data;
-        if (body.length > 10000000) request.connection.destroy();
-    });
-    request.on('end', () => handler(body, request));
 }
 
 function formEncode(content) {
