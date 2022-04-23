@@ -35,118 +35,115 @@ class GitHub {
         }
     }
 
-    internal = {
-        contents: (link) => link + 'contents',
-        releases: (link) => link + 'releases',
-        contributors: (link) => link + 'contributors',
-        languages: (link) => link + 'languages',
-        createRelease: (data, github) => {
-            data._github = github;
-            return data;
-        },
-        createUser: (data, github) => {
-            data._github = github;
-            data.display_name = data.name || data['login'];
-            data.getRepositories = async function () {
-                try {
-                    if (data._repos != null) return await data._repos;
-                    data._repos = new Promise(async resolve => {
-                        const array = [];
-                        for (let repo of (await request(data['repos_url']))) array.push(github.internal.createRepository(repo, github));
-                        resolve(array);
-                    });
-                    return await data._repos;
-                } catch (error) {
-                    console.log(error); // todo
-                    return [];
-                }
+    static contents = (link) => link + 'contents';
+    static releases = (link) => link + 'releases';
+    static contributors = (link) => link + 'contributors';
+    static languages = (link) => link + 'languages';
+    static createRelease = (data, github) => {
+        data._github = github;
+        return data;
+    };
+    static createUser = (data, github) => {
+        data._github = github;
+        data.display_name = data.name || data['login'];
+        data.getRepositories = async function () {
+            try {
+                if (data._repos != null) return await data._repos;
+                data._repos = new Promise(async resolve => {
+                    const array = [];
+                    for (let repo of (await request(data['repos_url']))) array.push(GitHub.createRepository(repo, github));
+                    resolve(array);
+                });
+                return await data._repos;
+            } catch (error) {
+                console.log(error); // todo
+                return [];
             }
-            data.getLanguages = async function () {
-                try {
-                    if (data._languages != null) return data._languages;
-                    const object = {};
-                    for (let repo of await data.getRepositories()) {
-                        if (repo['fork']) continue;
-                        const languages = await repo.getLanguages();
-                        for (let key in languages) {
-                            if (object.hasOwnProperty(key)) object[key] += languages[key];
-                            else object[key] = languages[key];
-                        }
-                    }
-                    return data._languages = object || {};
-                } catch (error) {
-                    console.log(error); // todo
-                    return data._languages || {};
-                }
-            }
-            return data;
-        },
-        createRepository: (data, github) => {
-            data._github = github;
-            data.version = async function () {
-                try {
-                    if (data._version != null) return data._version;
-                    data._version = (await github.latestRelease(true))['tag_name'];
-                    return data._version;
-                } catch (error) {
-                    return data._version || '';
-                }
-            }
-            data.getOwner = async function () {
-                return github.internal.createUser((await request(data['owner'].url)), github);
-            }
-            data.getLanguages = async function () {
-                try {
-                    if (data._languages != null) return data._languages;
-                    data._languages = await request(data['languages_url']);
-                    return data._languages || {};
-                } catch (error) {
-                    return data._languages || {};
-                }
-            }
-            data.getContributors = async function () {
-                try {
-                    if (data._members != null) return data._members;
-                    data._members = await request(data['contributors_url']);
-                    return data._members || {};
-                } catch (error) {
-                    return data._members || {};
-                }
-            }
-            data.getContents = async function () {
-                try {
-                    if (data._contents != null) return data._contents;
-                    data._contents = await request(data['url'] + '/contents');
-                    return data._contents || [];
-                } catch (error) {
-                    return data._contents || [];
-                }
-            }
-            return data;
         }
+        data.getLanguages = async function () {
+            try {
+                if (data._languages != null) return data._languages;
+                const object = {};
+                for (let repo of await data.getRepositories()) {
+                    if (repo['fork']) continue;
+                    const languages = await repo.getLanguages();
+                    for (let key in languages) {
+                        if (object.hasOwnProperty(key)) object[key] += languages[key];
+                        else object[key] = languages[key];
+                    }
+                }
+                return data._languages = object || {};
+            } catch (error) {
+                console.log(error); // todo
+                return data._languages || {};
+            }
+        }
+        return data;
+    };
+
+    static createRepository = (data, github) => {
+        data._github = github;
+        data.version = async function () {
+            try {
+                if (data._version != null) return data._version;
+                data._version = (await github.latestRelease(true))['tag_name'];
+                return data._version;
+            } catch (error) {
+                return data._version || '';
+            }
+        }
+        data.getOwner = async function () {
+            return GitHub.createUser((await request(data['owner'].url)), github);
+        }
+        data.getLanguages = async function () {
+            try {
+                if (data._languages != null) return data._languages;
+                data._languages = await request(data['languages_url']);
+                return data._languages || {};
+            } catch (error) {
+                return data._languages || {};
+            }
+        }
+        data.getContributors = async function () {
+            try {
+                if (data._members != null) return data._members;
+                data._members = await request(data['contributors_url']);
+                return data._members || {};
+            } catch (error) {
+                return data._members || {};
+            }
+        }
+        data.getContents = async function () {
+            try {
+                if (data._contents != null) return data._contents;
+                data._contents = await request(data['url'] + '/contents');
+                return data._contents || [];
+            } catch (error) {
+                return data._contents || [];
+            }
+        }
+        return data;
+    };
+
+    static parseDate = (time) => new Date(time);
+
+    static getUser = async function (id) {
+        if (id instanceof String && !/^\d+$/g.test(id)) return GitHub.createUser((await request(api + '/users/' + id)), this);
+        else return GitHub.createUser((await request(api + '/user/' + id)), this);
     }
 
-    parseDate(time) {
-        return new Date(time);
+    static getUserByName = async function (name) {
+        return GitHub.createUser((await request(api + '/users/' + name)), this);
     }
 
     async getRepository() {
         if (this.repository != null) return this.repository;
-        if (this.url.endsWith('/')) return this.repository = this.internal.createRepository((await request(this.url.substring(0, this.url.length - 1))), this);
-        else return this.repository = this.internal.createRepository((await request(this.url)), this);
-    }
-
-    async getUser(id) {
-        if (id instanceof String && !/^\d+$/g.test(id)) return this.internal.createUser((await request(api + '/users/' + id)), this);
-        else return this.internal.createUser((await request(api + '/user/' + id)), this);
-    }
-
-    async getUserByName(name) {
-        return this.internal.createUser((await request(api + '/users/' + name)), this);
+        if (this.url.endsWith('/')) return this.repository = GitHub.createRepository((await request(this.url.substring(0, this.url.length - 1))), this);
+        else return this.repository = GitHub.createRepository((await request(this.url)), this);
     }
 
     async getFile(name) {
-        return (await request(this.internal.contents(this.url) + name));
+        return (await request(GitHub.contents(this.url) + name));
     }
 
     async getFileContent(name) {
@@ -155,23 +152,23 @@ class GitHub {
 
     async latestRelease(draft = false) {
         try {
-            if (draft) return this.internal.createRelease((await this.listReleases())[0], this);
-            else return this.internal.createRelease((await request(this.internal.releases(this.url) + 'latest')), this);
+            if (draft) return GitHub.createRelease((await this.listReleases())[0], this);
+            else return GitHub.createRelease((await request(GitHub.releases(this.url) + 'latest')), this);
         } catch (error) {
             return null;
         }
     }
 
     async listContributors() {
-        return (await request(this.internal.contributors(this.url)));
+        return (await request(GitHub.contributors(this.url)));
     }
 
     async listReleases() {
-        return (await request(this.internal.releases(this.url)));
+        return (await request(GitHub.releases(this.url)));
     }
 
     async listFiles() {
-        if (this.files.length < 1) this.files = (await request(this.internal.contents(this.url)));
+        if (this.files.length < 1) this.files = (await request(GitHub.contents(this.url)));
         return this.files;
     }
 

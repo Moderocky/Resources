@@ -7,12 +7,7 @@
     <meta name="description" content="ByteSkript's public resource distribution centre, linked to the GitHub API."/>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/14147477?v=4"/>
     <meta name="keywords" content="byteskript, byte, skript, syzygy, resources, forums, marketplace, library"/>
-    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-          rel="stylesheet"/>
-    <link crossorigin href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link crossorigin href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&display=swap"
-          rel="stylesheet"/>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
     <script src="assets/js/lib/tailwind.js"></script>
     <link href="assets/css/style.css" rel="stylesheet"/>
 </head>
@@ -89,6 +84,7 @@
             import {wait} from "./assets/js/lib/wait.mjs";
             import {similarity} from "./assets/js/lib/similar.mjs";
             import {getLanguage, getLanguages} from "./assets/js/lib/languages.mjs";
+            import {GitHub} from "./assets/js/lib/github.mjs";
             const resources = {
                 current_page: 0,
                 per_page: 6,
@@ -158,7 +154,6 @@
                         resources.enabled = true;
                         return;
                     case 'popular':
-
                         (await resources.get(true)).sort((a, b) => b.stargazers_count - a.stargazers_count);
                         break;
                     default: (await resources.get(true)).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
@@ -174,9 +169,9 @@
                     return resources.list;
                 }
                 resources.enabled = false;
-                resources.data.push(...await github.getUser(72931234).then(user => user.getRepositories()));
-                resources.data.push(...await github.getUser(14147477).then(user => user.getRepositories()));
-                resources.data.push(...await github.getUser(29044720).then(user => user.getRepositories()));
+                resources.data.push(...await GitHub.getUser(72931234).then(user => user.getRepositories()));
+                resources.data.push(...await GitHub.getUser(14147477).then(user => user.getRepositories()));
+                resources.data.push(...await GitHub.getUser(29044720).then(user => user.getRepositories()));
                 resources.data = resources.data.filter(repo => repo && !repo.fork);
                 resources.max_page = Math.floor(resources.data.length / resources.per_page);
                 for (let datum of resources.data) datum.getLanguages().then(languages => {
@@ -214,7 +209,7 @@
                         repository.languages = await repository.getLanguages();
                         array.push(repository)
                     }
-                    array = array.sort((a, b) => (b.languages[language] || 0) - (a.languages[language] || 0));
+                    array.sort((a, b) => (b.languages[language] || 0) - (a.languages[language] || 0));
                 } catch (error) {console.log(error)}
                 resources.list = array;
                 resources.display();

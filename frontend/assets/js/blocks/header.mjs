@@ -1,4 +1,5 @@
 import {dom} from "../lib/dom.mjs";
+import {login} from "./login.mjs";
 export const header = dom.create(`
     <section class="menu flex flex-auto justify-center content-center">
         <div class="rotate-90 sm:rotate-0 transition my-auto mr-auto h-full sm:p-4 select-none flex flex-col">
@@ -26,7 +27,7 @@ export const header = dom.create(`
                         </div>
                     </div>
                 </div>
-                <div onclick="window.location.href = '/profile'" class="m-4 xl:mt-0 cursor-pointer {button_size} rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
+                <div onclick="window.location.href = '/user'" class="m-4 xl:mt-0 cursor-pointer {button_size} rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-green-500 to-emerald-400 w-full h-full -rotate-45 xl:-rotate-45 hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="Profile" class="px-4 uppercase text-white text-2xl">
@@ -55,12 +56,7 @@ export const header = dom.create(`
                 </div>
             </div>
         </div>
-        <div class="rotate-90 sm:rotate-0 transition my-auto ml-auto sm:p-4 select-none">
-            <button type="button" aria-label="Log in" class="group h-12 px-6 border-2 border-gray-600 dark:border-gray-300 rounded-full transition duration-300
- hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-                <p class="relative flex items-center space-x-4 justify-center text-lg text-gray-700 dark:text-gray-300 transition duration-300 group-hover:text-blue-600">
-                    <i class="fa-brands fa-github"></i> <span class="block w-max font-semibold tracking-wide sm:text-base">Log In</span>
-                </p>
-            </button>
+        <div data-login-area class="rotate-90 sm:rotate-0 transition my-auto ml-auto sm:p-4 select-none">
         </div>
     </section>`, {adjust_button: 'm-4 sm:-mt-4 xl:m-4', button_size: 'w-16 h-16 xl:w-20 xl:h-20'});
+header.querySelector('[data-login-area]').appendChild(login);
