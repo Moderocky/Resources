@@ -1,6 +1,7 @@
 
 import {dom} from "./lib/dom.mjs";
 import {github, repository, pendingRepository} from "./load.mjs";
+import {GitHub} from "./lib/github.mjs";
 
 pendingRepository.then(repository => {
     for (const element of document.querySelectorAll('[data-resource-icon]')) {
@@ -13,7 +14,7 @@ pendingRepository.then(repository => {
 
     for (const element of document.querySelectorAll('[data-last-updated]')) {
         const time = repository['pushed_at'];
-        const first = github.parseDate(time), second = Date.now();
+        const first = GitHub.parseDate(time), second = Date.now();
         element.appendChild(document.createTextNode(Math.round((second - first) / (1000 * 60 * 60 * 24)) + ' days ago.'));
     }
 
@@ -27,6 +28,11 @@ pendingRepository.then(repository => {
 
 for (const element of document.querySelectorAll('[data-version-history]')) {
     github.listReleases().then(releases => {
+        if (releases == null || releases.length < 1) {
+            document.querySelector('a[href="#version-history"]').href = '#';
+            return;
+        }
+        document.querySelector('a[href="#version-history"]').classList.remove('cursor-not-allowed');
         if (releases.length > 10) releases.length = 10;
         for (let release of releases) {
             let div;

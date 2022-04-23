@@ -44,17 +44,17 @@
                 <h4 class="mt-auto md:pb-1 text-gray-400 text-2xl" data-retrieve="version"></h4>
             </div>
             <div class="flex space-x-4">
-                <button aria-label="chat"
-                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-orange-500 to-amber-500"
+                <button aria-label="Repository"
+                        class="w-12 h-12 cursor-pointer rounded-lg bg-gradient-to-r from-orange-500 to-amber-500"
                         data-link-to-repo>
                     <i class="fa-solid fa-code-branch text-white"></i>
                 </button>
-                <button aria-label="chat"
-                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
+                <button aria-label="Download"
+                        class="w-12 h-12 cursor-pointer rounded-lg bg-gradient-to-r from-sky-500 to-cyan-400">
                     <i class="fa-solid fa-download text-white"></i>
                 </button>
-                <button aria-label="chat"
-                        class="w-12 h-12 cursor-pointer rounded-lg border dark:border-gray-500 bg-gradient-to-r from-green-500 to-emerald-400">
+                <button aria-label="Website"
+                        class="w-12 h-12 cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-emerald-400">
                     <i class="fa-solid fa-link text-white"></i>
                 </button>
             </div>
@@ -95,7 +95,7 @@
                     <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
                        href="#description">
                         Description</a>
-                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
                        href="#latest-release">
                         Latest Release</a>
                     <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
@@ -107,7 +107,7 @@
                     <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
                        href="#">
                         Website</a>
-                    <a class="px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
+                    <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
                        href="#version-history">
                         Version History</a>
                     <a class="cursor-not-allowed px-3 py-1.5 transition-colors text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-gray-200 rounded-lg capitalize"
@@ -138,7 +138,11 @@
                     import {generateMarkdown, fixMarkdown} from "./assets/js/resource.mjs";
                     const box = document.getElementById('latest-release').firstElementChild;
                     github.latestRelease(true).then(async release => {
-                        if (release == null) return;
+                        if (release == null) {
+                            document.querySelector('a[href="#latest-release"]').href = '#';
+                            return;
+                        }
+                        document.querySelector('a[href="#latest-release"]').classList.remove('cursor-not-allowed');
                         let background = ((release['prerelease'] || release['draft'])) ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-sky-500 to-cyan-400';
                         let meta;
                         box.appendChild(meta = dom.create(`
@@ -237,7 +241,7 @@
                                         i++;
                                         container.appendChild(dom.create(`
                                     <div class="w-full md:w-4/12 lg:w-6/12 2xl:w-4/12 p-2 cursor-pointer" onclick="window.location.search = '&id=` + repo.id + `'">
-                                        <div class="rounded-xl h-full px-4 py-6 rounded-xl bg-white bg-opacity-10 shadow-xl shadow-cla-violate bg-gradient-to-r {random}">
+                                        <div class="rounded-xl h-full px-4 py-6 bg-white bg-opacity-10 shadow-xl shadow-cla-violate bg-gradient-to-r {random}">
                                             <div class="">
                                                 <h2 class="text-xl">{name}</h2>
                                             </div>
