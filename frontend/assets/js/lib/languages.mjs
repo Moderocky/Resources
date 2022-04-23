@@ -34,12 +34,14 @@ const languages = {
 }
 
 languages.ByteSkript.matches = async (repository) => {
+    return false;
     const contents = await repository.getContents();
     for (let content of contents) if (content.path.endsWith('.bsk')) return true;
     return false;
 }
 
 languages.Skript.matches = async (repository) => {
+    return false;
     const contents = await repository.getContents();
     for (let content of contents) if (content.path.endsWith('.sk')) return true;
     return false;
