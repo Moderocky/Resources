@@ -4,12 +4,12 @@ const mime = require('mime');
 const querystring = require('querystring');
 const {fetch} = require('cross-fetch');
 
-const { database, Query } = require('./data');
+const {database, Query} = require('./data');
 
-const { Octokit } = require("@octokit/rest");
+const {Octokit} = require("@octokit/rest");
 let token = system.readFileSync('token.txt', 'utf8').trim();
 let secret = system.readFileSync('secret.txt', 'utf8').trim();
-const octokit = new Octokit({ auth: token });
+const octokit = new Octokit({auth: token});
 const usercache = {};
 
 class RequestCache {
@@ -64,9 +64,11 @@ class RequestCache {
         }
     }
 }
+
 const cache = new RequestCache();
 
 http.createServer(handle).listen(2040);
+
 async function handle(request, response) {
     if (request.url.startsWith('/login')) {
         await login(request, response);
@@ -98,7 +100,7 @@ function getFrontendFile(url, response) {
     }
 }
 
-async function login (request, response) {
+async function login(request, response) {
     response.writeHead(200);
     if (request.url.includes('?')) {
         const query = querystring.decode(request.url.substring(request.url.indexOf('?') + 1));
@@ -120,8 +122,9 @@ async function login (request, response) {
             let text = user.octokit().request('GET /user').then(result => result.data.id);
             return user._id = text;
         };
+        user.id().then(id => database.putIfAbsent({id: id, admin: false, resources: [], roles: []}, 'users', id + '.json'));
         usercache[session] = user;
-        response.write(`<script>window.location = '`+exit+`';</script>`);
+        response.write(`<script>window.location = '` + exit + `';</script>`);
         response.end();
     } else {
         if (request.method === 'POST') {
@@ -130,9 +133,13 @@ async function login (request, response) {
             const data = Buffer.concat(buffers).toString();
             try {
                 const user = usercache[querystring.parse(data).session];
-                response.write('{"user": ' + await user.id() + '}');
+                const id = await user.id();
+                if (id) {
+                    const request = await database.fetch('users', ((await user.id()) + '')).then(Query.value);
+                    response.write(JSON.stringify(request, null, 2));
+                } else response.write('null');
             } catch (error) {
-                response.write('{"user": null}');
+                response.write('null');
             }
             response.end();
         } else {
@@ -145,7 +152,7 @@ async function login (request, response) {
     }
 }
 
-async function api (request, response) {
+async function api(request, response) {
     try {
         let data, text;
         if (request.url.startsWith('/api/git')) {

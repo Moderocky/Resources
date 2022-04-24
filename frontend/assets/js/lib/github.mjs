@@ -128,7 +128,7 @@ class GitHub {
     static parseDate = (time) => new Date(time);
 
     static getUser = async function (id) {
-        if (id instanceof String && !/^\d+$/g.test(id)) return GitHub.createUser((await request(api + '/users/' + id)), this);
+        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return GitHub.createUser((await request(api + '/users/' + id)), this);
         else return GitHub.createUser((await request(api + '/user/' + id)), this);
     }
 

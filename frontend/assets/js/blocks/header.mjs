@@ -27,7 +27,7 @@ export const header = dom.create(`
                         </div>
                     </div>
                 </div>
-                <div onclick="window.location.href = '/user'" class="m-4 xl:mt-0 cursor-pointer {button_size} rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
+                <div onclick="window.location.href = '/users'" class="m-4 xl:mt-0 cursor-pointer {button_size} rounded-[1rem] rotate-45 xl:rotate-[45deg] overflow-hidden hover:rotate-0 transition duration-300 hover:scale-110">
                     <div class="flex flex-auto items-center bg-gradient-to-r from-green-500 to-emerald-400 w-full h-full -rotate-45 xl:-rotate-45 hover:rotate-0 scale-125 mx-auto transition duration-300">
                         <div class="my-auto mx-auto items-center">
                             <h2 aria-label="Profile" class="px-4 uppercase text-white text-2xl">

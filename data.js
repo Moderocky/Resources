@@ -88,7 +88,7 @@ class Query {
     static last = (query) => query.getLast();
     static find = (query) => query.fetch(query.getValue());
     static value = (query) => query.getValue();
-    static text = (query) => JSON.stringify({target: query.target(), value: query.getValue()});
+    static text = (query) => JSON.stringify({target: query.target(), value: query.getValue()}, null, 2);
 
     async fetch(...url) {
         return await this.database.fetch(...this.location, ...url);
@@ -120,9 +120,13 @@ class Database {
     data = { get: (name) => this[name] || (this[name] = new CacheMap(16, 200)) };
     _list = async (path) => system.readdirSync(path, {withFileTypes: true}).filter(item => !item.isDirectory()).map(item => item.name.substring(0, item.name.lastIndexOf('.')))
     _getContent = async (path) => {
-        let lock = this.lock[path] || (this.lock[path] = Promise.resolve()), promise;
-        this.lock[path] = promise = lock.then(() => system.readFileSync(path));
-        return (await promise).toString();
+        try {
+            let lock = this.lock[path] || (this.lock[path] = Promise.resolve()), promise;
+            this.lock[path] = promise = lock.then(() => system.readFileSync(path)).catch(() => '{}');
+            return (await promise).toString();
+        } catch (error) {
+            return '{}';
+        }
     }
     _setContent = async (path, text) => {
         let lock = this.lock[path] || (this.lock[path] = Promise.resolve()), promise;
@@ -130,21 +134,38 @@ class Database {
         return await promise;
     }
 
+    _getPath = (...location) => path.resolve(__dirname, this.path, ...location);
+
     async getContent(...location) {
-        const target = path.resolve(__dirname, this.path, ...location);
+        const target = this._getPath(...location);
         let cache = this.data.get(location[1]), value;
         if (cache.has(target)) return cache.get(target);
         cache.set(target, value = await this._getContent(target).then(toString));
         return value;
     }
 
+    async putIfAbsent(object, ...location) {
+        const target = this._getPath(...location);
+        if (system.existsSync(target)) return false;
+        await this.mergeWrite(object, ...location);
+        return true;
+    }
+
     async getObject(...location) {
-        const target = path.resolve(__dirname, this.path, ...location), database = this;
+        const target = this._getPath(...location), database = this;
         let cache = this.data.get(location[1]), object;
         if (cache.has(target)) return cache.get(target);
         cache.set(target, object = await database._getContent(target).then(JSON.parse));
         object.save = () => database._setContent(target, JSON.stringify(object));
         return object;
+    }
+
+    async mergeWrite(object, ...location) {
+        try {
+            const data = await this.getObject(...location);
+            Object.assign(data, object);
+            await data.save();
+        } catch (error) { console.log(error); }
     }
 
     async fetch(...url) {
@@ -154,7 +175,7 @@ class Database {
         if (list || check) url = url.substring(0, url.length - 1);
         let location = url.split('/'), target = path.resolve(__dirname, this.path, ...location), value;
         if (check) value = system.existsSync(target) || system.existsSync(target + '.json');
-        else if (system.existsSync(target)) value = await this._list(target);
+        else if (system.existsSync(target) && system.lstatSync(target).isDirectory()) value = await this._list(target);
         else if (!list && system.existsSync(target + '.json')) value = await this.getObject(...((location[location.length-1] = location[location.length-1] + '.json') && location));
         else value = check ? false : null;
         return new Query(this, value, ...location);

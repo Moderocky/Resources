@@ -2,11 +2,62 @@
 import {http} from "./request.mjs";
 import {session} from "./session.mjs";
 import {GitHub} from "./github.mjs";
-const account = {
-    id: null,
-    user: null,
-    resolved: false,
+const api = '/api';
+
+class Account {
+    user;
+    resolved;
+    valid;
+    id;
+
+    constructor(id) {
+        this.id = id;
+        if (id == null) return;
+        this.awaitReady().then(() => this.resolved = true);
+        this.getUser().then();
+    }
+
+    async getUser() {
+        if (this.user != null) return this.user;
+        const id = await this.getId();
+        return this.user = await GitHub.getUser(id);
+    }
+
+    async getId() {
+        return this.id;
+    };
+
+    async isLoggedIn() {
+        return false;
+    }
+
+    async request() {
+        if (this.resolved || this._lock) return;
+        this._lock = true;
+        let data;
+        if (/^\d+$/g.test(this.id + '')) {
+            data = await http.get(api + '/users/' + this.id).then(JSON.parse);
+        } else {
+            const user = await this.getUser();
+            data = await http.get(api + '/users/' + user.id).then(JSON.parse);
+        }
+        this.valid = !!data.value;
+        Object.assign(this, data.value);
+        delete this._lock;
+    }
+
+    _promise;
+    async awaitReady() {
+        if (this.resolved) return;
+        if (this._promise != null) return this._promise;
+        this._promise = new Promise(async (resolve) => resolve(await this.request()));
+        await this._promise;
+        delete this._promise;
+    }
+
 }
+
+const account = new Account(null);
 
 account.login = function (url = true) {
     if (url === true) url = window.location;
@@ -16,17 +67,13 @@ account.login = function (url = true) {
         state: session.id + '->' + encodeURI(url)
     })
 };
-account.getUser = async function() {
-    if (account.user != null) return account.user;
-    const id = await account.getId();
-    return account.user = await GitHub.getUser(id);
-};
 account.getId = async function () {
     if (account.resolved || account.id != null) return account.id;
-    account.id = await http.post('/login', {session: session.id}).then(JSON.parse).then(data => data.user);
+    const data = await http.post('/login', {session: session.id}).then(JSON.parse);
+    Object.assign(account, data);
     account.resolved = true;
     return account.id;
 };
 account.isLoggedIn = async () => (await account.getId()) != null;
 
-export {account}
+export {Account, account}

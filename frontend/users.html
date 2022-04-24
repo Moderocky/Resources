@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <title>Syzygy | Users</title>
+    <meta name="description" content="Learn about Syzygy, ByteSkript's public resource distribution centre."/>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/14147477?v=4"/>
+    <meta name="keywords" content="users, byteskript, byte, skript, syzygy, resources, forums, marketplace, library"/>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
+    <script>
+        try {
+            let query;
+            read: {
+                location.hash
+                if (location.search == null || location.search.length < 1) {
+                    query = {};
+                    break read;
+                }
+                const request = {}, pairs = location.search.substring(1).split('&');
+                for (let i = 0; i < pairs.length; i++) {
+                    const pair = pairs[i].split('=');
+                    request[pair[0]] = pair[1];
+                }
+                query = request;
+            }
+            if (query && query.hasOwnProperty('id')) {
+                document
+                    .querySelector('head meta[name=description]')
+                    .setAttribute('content', `View this user's profile.`);
+                document
+                    .querySelector('head title').innerText = 'Syzygy | User Profile';
+            }
+        } catch (error) {console.log(error)}
+        document.currentScript.parentElement.removeChild(document.currentScript);
+    </script>
+    <script src="assets/js/lib/tailwind.js"></script>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+</head>
+<body class="dark:bg-gray-800 dark:text-gray-300 opacity-0 transition-opacity">
+<div class="mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
+    <section data-header>
+        <script type="module">
+            import {header} from "./assets/js/blocks/header.mjs";
+            document.querySelector('section[data-header]').replaceWith(header);
+        </script>
+    </section>
+    <section data-user-list class="hidden">
+        <div class="px-4 2xl:container">
+            <div class="w-full lg:my-2 flex flex-wrap">
+
+
+            </div>
+        </div>
+        <script type="module">
+            import {dom} from "./assets/js/lib/dom.mjs";
+            import {http} from "./assets/js/lib/request.mjs";
+            const section = document.querySelector('section[data-user-list]'), container = section.firstElementChild.firstElementChild;
+            const id = http.current()['id'];
+            if (id == null) {
+                container.appendChild(dom.create(`<h2>HELLO</h2>`)); // todo
+                section.classList.remove('hidden');
+                section.querySelector('script').remove();
+            }
+        </script>
+    </section>
+    <section data-user-profile class="hidden">
+        <div class="px-2">
+            <div class="w-full lg:my-2 flex flex-wrap">
+                <div class="w-full md:w-8/12">
+                    <div data-profile>
+                        <script type="module">
+                            import {http} from "./assets/js/lib/request.mjs";
+                            import {GitHub} from "./assets/js/lib/github.mjs";
+                            import {profile} from "./assets/js/blocks/profile.mjs";
+                            import {Account} from "./assets/js/lib/login.mjs";
+                            const id = http.current()['id'];
+                            if (id == null) document.querySelector('section[data-user-profile]').remove();
+                            else GitHub.getUser(id).then(async user => {
+                                document.querySelector('section[data-user-list]').remove();
+                                const account = new Account(id);
+                                await account.awaitReady();
+                                if (!account.valid) window.location.href = '/users';
+                                stop();
+                                document.querySelector('section[data-user-profile]').classList.remove('hidden');
+                                document.querySelector('section[data-user-profile] div[data-profile]').replaceWith(profile(user, account));
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    document.body.classList.remove('opacity-0');
+    document.currentScript.parentElement.removeChild(document.currentScript);
+</script>
+</body>
+</html>
