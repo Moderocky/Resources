@@ -72,18 +72,35 @@
                         <script type="module">
                             import {http} from "./assets/js/lib/request.mjs";
                             import {GitHub} from "./assets/js/lib/github.mjs";
+                            import {dom} from "./assets/js/lib/dom.mjs";
                             import {profile} from "./assets/js/blocks/profile.mjs";
                             import {Account} from "./assets/js/lib/login.mjs";
                             const id = http.current()['id'];
                             if (id == null) document.querySelector('section[data-user-profile]').remove();
-                            else GitHub.getUser(id).then(async user => {
+                            else GitHub.getUser(id).awaitReady().then(async user => {
                                 document.querySelector('section[data-user-list]').remove();
-                                const account = new Account(id);
+                                const account = new Account(id, user);
                                 await account.awaitReady();
-                                if (!account.valid) window.location.href = '/users';
-                                stop();
-                                document.querySelector('section[data-user-profile]').classList.remove('hidden');
-                                document.querySelector('section[data-user-profile] div[data-profile]').replaceWith(profile(user, account));
+                                if (!account.valid) {
+                                    window.location.href = '/users';
+                                    stop();
+                                    return;
+                                }
+                                const contributor = await GitHub.getRepository(483594530).isContributor(user);
+                                if (contributor) account.roles.push("contributor");
+                                const section = document.querySelector('section[data-user-profile]');
+                                section.classList.remove('hidden');
+                                section.querySelector('div[data-profile]').replaceWith(profile(user, account));
+                                const badges = section.querySelector('[data-profile-badges]');
+                                if (account.roles.includes('admin'))
+                                    badges.appendChild(dom.create(`<span class="uppercase text-sm bg-fuchsia-400 rounded-md scale-90 px-1 w-min">admin</span>`));
+                                if (account.roles.includes('staff'))
+                                    badges.appendChild(dom.create(`<span class="uppercase text-sm bg-indigo-400 rounded-md scale-90 px-1 w-min">staff</span>`));
+                                if (account.roles.includes('donor'))
+                                    badges.appendChild(dom.create(`<span class="uppercase text-sm bg-amber-400 rounded-md scale-90 px-1 w-min">donor</span>`));
+                                GitHub.getRepository(483594530).isContributor(user).then(value => {
+                                    if (value) badges.appendChild(dom.create(`<span class="uppercase text-sm bg-emerald-400 rounded-md scale-90 px-1 w-min">contributor</span>`));
+                                });
                             });
                         </script>
                     </div>

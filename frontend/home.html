@@ -78,7 +78,6 @@
 
         </div>
         <script type="module">
-            import {github} from "./assets/js/home.mjs";
             import {card} from "./assets/js/blocks/repo_card.mjs";
             import {lang} from "./assets/js/blocks/lang_card.mjs";
             import {wait} from "./assets/js/lib/wait.mjs";
@@ -169,9 +168,9 @@
                     return resources.list;
                 }
                 resources.enabled = false;
-                resources.data.push(...await GitHub.getUser(72931234).then(user => user.getRepositories()));
-                resources.data.push(...await GitHub.getUser(14147477).then(user => user.getRepositories()));
-                resources.data.push(...await GitHub.getUser(29044720).then(user => user.getRepositories()));
+                resources.data.push(...await GitHub.getUser(72931234).getRepositories());
+                resources.data.push(...await GitHub.getUser(14147477).getRepositories());
+                resources.data.push(...await GitHub.getUser(29044720).getRepositories());
                 resources.data = resources.data.filter(repo => repo && !repo.fork);
                 resources.max_page = Math.floor(resources.data.length / resources.per_page);
                 for (let datum of resources.data) datum.getLanguages().then(languages => {

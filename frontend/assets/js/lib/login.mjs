@@ -9,18 +9,20 @@ class Account {
     resolved;
     valid;
     id;
+    roles = [];
 
-    constructor(id) {
+    constructor(id, user) {
         this.id = id;
         if (id == null) return;
         this.awaitReady().then(() => this.resolved = true);
-        this.getUser().then();
+        if (user) this.valid = !!(this.user = user);
+        else this.getUser().then();
     }
 
     async getUser() {
         if (this.user != null) return this.user;
         const id = await this.getId();
-        return this.user = await GitHub.getUser(id);
+        return this.user = await GitHub.getUser(id).awaitReady();
     }
 
     async getId() {

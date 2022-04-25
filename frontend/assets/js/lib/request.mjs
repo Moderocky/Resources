@@ -39,6 +39,8 @@ const http = {
             method: 'GET',
             mode: mode,
             headers: headers
+        }).catch(error => {
+            console.log('Error fetching ' + url + tail + ' -> '+ error);
         });
     }
 }

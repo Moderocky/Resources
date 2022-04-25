@@ -1,4 +1,5 @@
 import {dom} from "../lib/dom.mjs";
+import {Organisation} from "../lib/github.mjs";
 
 export const profile = (user, account) => dom.create(`
         <div class="w-full h-full p-2 transition-opacity">
@@ -7,17 +8,7 @@ export const profile = (user, account) => dom.create(`
                 <div class="w-8/12 p-5 h-full">
                     <div class="space-y-2 flex flex-col h-full">
                         <h4 class="text-2xl font-semibold text-gray-100">{icon}{display_name}</h4>
-                        <div class="h-min">
-                        ` + (account.roles.includes('admin') ? `
-                        <span class="uppercase text-sm bg-fuchsia-400 rounded-md scale-90 px-1 w-min">admin</span>
-                        ` : '') + (account.roles.includes('contributor') ? `
-                        <span class="uppercase text-sm bg-emerald-400 rounded-md scale-90 px-1 w-min">contributor</span>
-                        ` : '') + (account.roles.includes('staff') ? `
-                        <span class="uppercase text-sm bg-indigo-400 rounded-md scale-90 px-1 w-min">staff</span>
-                        ` : '') + (account.roles.includes('donor') ? `
-                        <span class="uppercase text-sm bg-amber-400 rounded-md scale-90 px-1 w-min">donor</span>
-                        ` : '') + `
-                        </div>
+                        <div data-profile-badges class="h-min space-x-2"></div>
                         <p class="text-gray-200">{bio}</p>
                         <div class="text-gray-300">
                             ` + (user.company != null ? `<h3><i class="fa-solid fa-briefcase w-5"></i> ` + user.company + `</h3>` : '') + `
@@ -32,7 +23,7 @@ export const profile = (user, account) => dom.create(`
     {
         ...user,
         ...account,
-        icon: (account.admin
+        icon: user instanceof Organisation ? `<i class="fa-solid fa-people-roof text-slate-300 mr-2"></i>` : (account.admin
             ? `<i class="fa-solid fa-screwdriver-wrench text-violet-400 mr-2"></i> `
             : '')
     }

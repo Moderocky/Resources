@@ -1,9 +1,9 @@
 
 import {dom} from "./lib/dom.mjs";
-import {github, repository, pendingRepository} from "./load.mjs";
+import {repository} from "./load.mjs";
 import {GitHub} from "./lib/github.mjs";
 
-pendingRepository.then(repository => {
+repository.awaitReady().then(repository => {
     for (const element of document.querySelectorAll('[data-resource-icon]')) {
         element.src = getIcon();
     }
@@ -17,17 +17,17 @@ pendingRepository.then(repository => {
         const first = GitHub.parseDate(time), second = Date.now();
         element.appendChild(document.createTextNode(Math.round((second - first) / (1000 * 60 * 60 * 24)) + ' days ago.'));
     }
-
-    for (const element of document.querySelectorAll('[data-readme]')) {
-        github.getFileContent('README.md').then(text => {
-            generateMarkdown(text, element);
-            fixMarkdown(element);
-        })
-    }
 });
 
+for (const element of document.querySelectorAll('[data-readme]')) {
+    repository.getFileContent('README.md').then(text => {
+        generateMarkdown(text, element);
+        fixMarkdown(element);
+    })
+}
+
 for (const element of document.querySelectorAll('[data-version-history]')) {
-    github.listReleases().then(releases => {
+    repository.getReleases().then(releases => {
         if (releases == null || releases.length < 1) {
             document.querySelector('a[href="#version-history"]').href = '#';
             return;
@@ -120,7 +120,7 @@ function fixMarkdown(element) {
 
 export {generateMarkdown, fixMarkdown}
 
-pendingRepository.then(async repository => {
+repository.awaitReady().then(async repository => {
     for (const element of document.querySelectorAll('[data-link-to-repo]')) {
         if (element.tagName === 'A') element.href = repository['html_url'];
         else element.onclick = () => window.location = repository['html_url'];
@@ -137,7 +137,7 @@ pendingRepository.then(async repository => {
 });
 
 async function countDownloads() {
-    const releases = await github.listReleases();
+    const releases = await repository.getReleases();
     let downloads = 0;
     for (let release of releases) {
         if (release == null || release.assets == null) continue;
@@ -165,7 +165,7 @@ function abbreviateNumber(value) {
 }
 countDownloads().then();
 
-github.listContributors().then(list => {
+repository.getContributors().then(list => {
     for (const element of document.querySelectorAll('[data-display-contributors]')) {
         let x = 0;
         for (let user of list) {

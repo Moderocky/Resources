@@ -5,9 +5,9 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
     <script src="assets/js/load.mjs" type="module"></script>
     <script type="module">
-        import {pendingRepository} from "./assets/js/load.mjs";
+        import {repository} from "./assets/js/load.mjs";
         try {
-            pendingRepository.then(repository => {
+            repository.awaitReady().then(repository => {
                 document.head.insertAdjacentHTML('beforeend', `<title>Resource | ` + repository.name + `</title>`);
                 document.head.insertAdjacentHTML('beforeend', `<meta name="description" content="` + repository.description + `"/>`);
                 document.head.insertAdjacentHTML('beforeend', `<meta name="keywords" content="` + repository['topics'].join(', ') + `"/>`);
@@ -36,12 +36,19 @@
     </section>
     <div class="">
         <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container border-b py-1 lg:py-2.5">
-            <div class="flex mr-auto space-x-4">
+            <div data-leading class="flex mr-auto space-x-4">
                 <img alt="Resource icon" class="w-12 h-12 rounded-lg border dark:border-gray-500" data-resource-icon
                      src="">
                 <h5 class="text-3xl md:pb-1 mt-auto text-gray-600 dark:text-gray-100 font-medium lg:block"
                     data-retrieve="name"></h5>
-                <h4 class="mt-auto md:pb-1 text-gray-400 text-2xl" data-retrieve="version"></h4>
+                <h4 class="mt-auto md:pb-1 text-gray-400 text-2xl"></h4>
+                <script type="module">
+                    import {repository} from "./assets/js/load.mjs";
+                    const div = document.querySelector('div[data-leading]');
+                    const h4 = div.querySelector('h4');
+                    repository.getVersion().then(version => h4.innerText = version);
+                    div.querySelector('script').remove();
+                </script>
             </div>
             <div class="flex space-x-4">
                 <button aria-label="Repository"
@@ -133,11 +140,11 @@
             <div id="latest-release" class="hidden w-full xl:w-9/12 p-2">
                 <div class="markdown"></div>
                 <script type="module">
-                    import {github} from "./assets/js/load.mjs";
+                    import {repository} from "./assets/js/load.mjs";
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {generateMarkdown, fixMarkdown} from "./assets/js/resource.mjs";
                     const box = document.getElementById('latest-release').firstElementChild;
-                    github.latestRelease(true).then(async release => {
+                    repository.getLatestRelease(true).then(async release => {
                         if (release == null) {
                             document.querySelector('a[href="#latest-release"]').href = '#';
                             return;
@@ -175,7 +182,7 @@
             <div id="author-information" class="hidden w-full xl:w-9/12">
                 <div data-author-information class=""></div>
                 <script type="module">
-                    import {pendingRepository} from "./assets/js/load.mjs";
+                    import {repository} from "./assets/js/load.mjs";
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {Random} from "./assets/js/lib/random.mjs";
                     const options = [
@@ -190,7 +197,7 @@
                         'from-orange-400/20 to-amber-400/20 hover:from-orange-400/50 hover:to-amber-400/50 transition'];
                     const random = new Random(12);
                     const box = document.getElementById('author-information').firstElementChild;
-                    pendingRepository.then(repository => {
+                    repository.awaitReady().then(repository => {
                         repository.getOwner().then(user => {
                             box.appendChild(dom.create(`
                             <div class="rounded-xl m-2 px-4 py-6 rounded-xl bg-white bg-opacity-10 shadow-xl">
@@ -303,7 +310,7 @@
                             <i class="fa-solid fa-desktop w-5"></i> Website
                         </div>
                         <script type="module">
-                            import {repository, github} from "./assets/js/load.mjs";
+                            import {repository} from "./assets/js/load.mjs";
                             const bar = document.querySelector('[data-action-bar]');
                             bar.querySelector('[data-link-to-issues]').onclick = () => window.location = repository['html_url'] + '/issues';
                             if (repository['homepage'] != null) {
@@ -311,7 +318,7 @@
                                 element.onclick = () => window.location = repository['homepage'];
                                 element.classList.remove('hidden');
                             }
-                            github.listReleases().then(releases => {
+                            repository.getReleases().then(releases => {
                                 if (releases.length < 0) return;
                                 const element = bar.querySelector('[data-link-to-releases]');
                                 element.onclick = () => window.location = repository['html_url'] + '/releases';
@@ -349,7 +356,7 @@
 
 <script type="module">
     import {fixScrollBehaviour} from "./assets/js/lib/scroll.mjs";
-    import {pendingRepository} from "./assets/js/load.mjs";
+    import {repository} from "./assets/js/load.mjs";
     fixScrollBehaviour();
     addEventListener('hashchange', revealElement);
     revealElement().catch(console.error);
@@ -365,7 +372,7 @@
         node.classList.remove('hidden');
         node.classList.remove('opacity-0');
     }
-    pendingRepository.then(async () => {
+    repository.awaitReady().then(async () => {
         await wait(350);
         document.body.classList.remove('opacity-0');
     })
