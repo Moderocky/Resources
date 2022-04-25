@@ -75,6 +75,8 @@
                             import {dom} from "./assets/js/lib/dom.mjs";
                             import {profile} from "./assets/js/blocks/profile.mjs";
                             import {Account} from "./assets/js/lib/login.mjs";
+                            import {date} from "./assets/js/lib/date.mjs";
+                            import {statistics} from "./assets/js/blocks/statistics.mjs";
                             const id = http.current()['id'];
                             if (id == null) document.querySelector('section[data-user-profile]').remove();
                             else GitHub.getUser(id).awaitReady().then(async user => {
@@ -86,8 +88,6 @@
                                     stop();
                                     return;
                                 }
-                                const contributor = await GitHub.getRepository(483594530).isContributor(user);
-                                if (contributor) account.roles.push("contributor");
                                 const section = document.querySelector('section[data-user-profile]');
                                 section.classList.remove('hidden');
                                 section.querySelector('div[data-profile]').replaceWith(profile(user, account));
@@ -101,14 +101,39 @@
                                 GitHub.getRepository(483594530).isContributor(user).then(value => {
                                     if (value) badges.appendChild(dom.create(`<span class="uppercase text-sm bg-emerald-400 rounded-md scale-90 px-1 w-min">contributor</span>`));
                                 });
+                                const lastWeek = date.plus((-24*7));
+                                user.getEventsAfter(lastWeek).then(events => {
+                                    const data = {
+                                        pushes: events.filter(event => event.type === 'PushEvent').length,
+                                        prs: events.filter(event => event.type === 'PullRequestEvent').length,
+                                        forks: events.filter(event => event.type === 'ForkEvent').length,
+                                        issues: events.filter(event => event.type === 'IssuesEvent').length,
+                                        reviews: events.filter(event => event.type === 'PullRequestReviewEvent').length
+                                    };
+                                    section.querySelector('div[data-user-statistics]').replaceWith(statistics(data));
+                                });
+                                section.querySelector('div[data-user-statistics] canvas[data-user-graph]')
+                                    .replaceWith(dom.create(`<img class="w-full" src="https://ghchart.rshah.org/ff0000/` + user.login + `" alt="Commit streak.">`));
                             });
                         </script>
+                    </div>
+                </div>
+                <div class="w-full md:w-4/12">
+                    <div data-user-statistics>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <div data-user-statistics class="w-full h-full p-2 transition-opacity">
+                        <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">
+                            <canvas data-user-graph></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 <script>
     document.body.classList.remove('opacity-0');
     document.currentScript.parentElement.removeChild(document.currentScript);

@@ -9,14 +9,28 @@ class Account {
     resolved;
     valid;
     id;
+    banned;
     roles = [];
 
     constructor(id, user) {
         this.id = id;
         if (id == null) return;
-        this.awaitReady().then(() => this.resolved = true);
+        this.awaitReady().then();
         if (user) this.valid = !!(this.user = user);
         else this.getUser().then();
+    }
+
+    isAdmin() {
+        return this.roles.includes('admin');
+    }
+
+    isBanned() {
+        return this.banned;
+    }
+
+    async getIcon() {
+        const id = await this.getId();
+        return 'https://avatars.githubusercontent.com/u/' + id + '?v=4';
     }
 
     async getUser() {
@@ -46,15 +60,18 @@ class Account {
         this.valid = !!data.value;
         Object.assign(this, data.value);
         delete this._lock;
+        return this;
     }
 
     _promise;
     async awaitReady() {
-        if (this.resolved) return;
+        if (this.resolved) return this;
         if (this._promise != null) return this._promise;
-        this._promise = new Promise(async (resolve) => resolve(await this.request()));
+        this._promise = this.request();
         await this._promise;
         delete this._promise;
+        this.resolved = true;
+        return this;
     }
 
 }
