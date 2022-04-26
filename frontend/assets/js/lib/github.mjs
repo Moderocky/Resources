@@ -195,7 +195,7 @@ class User extends Git {
             for (let event of (await this.getEventsByPage(page, 30))) {
                 current = new Date(event.created_at);
                 if (current.getTime() > date.getTime()) array.push(event);
-                else break;
+                // else break;
             }
         } while (array.length > check && current.getTime() > date.getTime());
         return array;

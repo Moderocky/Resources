@@ -3,6 +3,7 @@ const system = require('fs');
 const mime = require('mime');
 const querystring = require('querystring');
 const {fetch} = require('cross-fetch');
+const process = require('child_process');
 
 const {database, Query} = require('./data');
 
@@ -76,6 +77,7 @@ async function handle(request, response) {
         await api(request, response);
     } else {
         try {
+            if (request.url.startsWith('/activity_graph')) await prepareGraph(request.url);
             const data = getFrontendFile(request.url, response);
             response.write(data);
         } catch (error) {
@@ -84,6 +86,16 @@ async function handle(request, response) {
         }
         response.end();
     }
+}
+
+async function prepareGraph(url) {
+    const file = 'frontend' + url;
+    if (system.existsSync(file)) {
+        const stat = system.statSync(file);
+        if ((Math.abs(stat.birthtime - new Date()) / 36e5) < 2) return;
+    }
+    const name = url.substring('/activity_graph/'.length, url.length-4);
+    process.execSync('githubchart -s halloween -u ' + name + ' ' + file);
 }
 
 function getFrontendFile(url, response) {
