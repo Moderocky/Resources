@@ -113,7 +113,9 @@
                                     };
                                     section.querySelector('div[data-user-statistics]').replaceWith(statistics(data));
                                 });
-                                section.querySelector('div[data-user-statistics] img[data-activity-graph]').src = 'https://resources.byteskript.org/activity_graph/' + user.login + '.svg';
+                                const img = section.querySelector('div[data-user-statistics] img[data-activity-graph]');
+                                img.src = 'https://resources.byteskript.org/activity_graph/' + user.login + '.svg';
+                                img.classList.remove('opacity-0');
                             });
                         </script>
                     </div>
@@ -125,7 +127,7 @@
                 <div class="w-full">
                     <div data-user-statistics class="w-full h-full p-2 transition-opacity">
                         <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">
-                            <img data-activity-graph class="w-full" src="" alt="Commit streak.">
+                            <img data-activity-graph class="opacity-0 transition-opacity w-full" src="" alt="Commit streak.">
                         </div>
                     </div>
                 </div>

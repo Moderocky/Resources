@@ -81,6 +81,7 @@ async function handle(request, response) {
             const data = getFrontendFile(request.url, response);
             response.write(data);
         } catch (error) {
+            console.log(error);
             response.writeHead(500);
             response.write(error.toString());
         }
@@ -95,7 +96,14 @@ async function prepareGraph(url) {
         if ((Math.abs(stat.birthtime - new Date()) / 36e5) < 2) return;
     }
     const name = url.substring('/activity_graph/'.length, url.length-4);
-    process.execSync('githubchart -s halloween -u ' + name + ' ' + file);
+    let data = '' + process.execSync('githubchart -c halloween -u ' + name).toString();
+    data = data.replace(/#EEEEEE/g, 'rgba(210,210,210,0.3)');
+    data = data.replace(/#FFEE4A/g, 'rgba(169,154,255,0.9)');
+    data = data.replace(/#FFC501/g, 'rgba(154,121,255,0.9)');
+    data = data.replace(/#FE9600/g, 'rgba(178,106,255,0.9)');
+    data = data.replace(/#03001C/g, 'rgba(207,85,255,0.95)');
+    data = data.replace(/#767676/g, 'rgba(210,210,210,1)');
+    system.writeFileSync(file, data);
 }
 
 function getFrontendFile(url, response) {
@@ -108,7 +116,7 @@ function getFrontendFile(url, response) {
         return data;
     } else {
         response.writeHead(404);
-        return 'Page not found.';
+        return `<script>window.location = 'https://resources.byteskript.org/home';</script>`;
     }
 }
 
@@ -126,7 +134,7 @@ async function login(request, response) {
                 method: 'POST',
                 body: formEncode({client_id: 'Iv1.5b5f5c814012e08f', client_secret: secret, code: query.code}),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).then(thing => thing.text()).then(querystring.decode)
+            }).catch(error => (console.log(error))).then(thing => thing.text()).then(querystring.decode)
         }
         user['octokit'] = () => new Octokit({auth: user.access_token});
         user.id = async () => {
@@ -157,7 +165,7 @@ async function login(request, response) {
         } else {
             response.write(`<script type="module">
                 import {login} from "./assets/js/lib/login.mjs";
-                login('http://localhost:2040/test.html').then(); // todo
+                login('https://resources.byteskript.org/home').then();
             </script>`);
             response.end();
         }

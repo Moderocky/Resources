@@ -1,43 +1,15 @@
 import {dom} from "../lib/dom.mjs";
+import {http} from "../lib/request.mjs";
 
 
-export function chart(array) {
-    const canvas = dom.create(`<canvas height="400"></canvas>`);
-    const context = canvas.getContext('2d');
-    const chart = new Chart(context, {
-        type: 'bar',
-        data: {
-            // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: array,
-                backgroundColor: 'rgba(255, 99, 132, 1)',
-                // backgroundColor: [
-                //     'rgba(255, 99, 132, 0.2)',
-                //     'rgba(54, 162, 235, 0.2)',
-                //     'rgba(255, 206, 86, 0.2)',
-                //     'rgba(75, 192, 192, 0.2)',
-                //     'rgba(153, 102, 255, 0.2)',
-                //     'rgba(255, 159, 64, 0.2)'
-                // ],
-                // borderColor: [
-                //     'rgba(255, 99, 132, 1)',
-                //     'rgba(54, 162, 235, 1)',
-                //     'rgba(255, 206, 86, 1)',
-                //     'rgba(75, 192, 192, 1)',
-                //     'rgba(153, 102, 255, 1)',
-                //     'rgba(255, 159, 64, 1)'
-                // ],
-                // borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    return canvas;
+export async function chart(user) {
+    let data = await http.getRaw('https://resources.byteskript.org/activity_graph/' + user.login + '.svg', {}, {}, 'no-cors').then(response => response.text());
+    console.log(data);
+    data = data.replaceAll('#EEEEEE', 'rgba(210,210,210,0.5)');
+    data = data.replaceAll('#FFEE4A', 'rgba(150,140,204,0.5)');
+    data = data.replaceAll('#FFC501', 'rgba(155,120,206,0.5)');
+    data = data.replaceAll('#FE9600', 'rgba(150,111,220,0.5)');
+    data = data.replaceAll('#03001C', 'rgba(207,53,241,0.5)');
+    data = data.replaceAll('#767676', 'rgba(210,210,210,0.9)');
+    return dom.create(`<div class="w-full h-auto">` + data + `</div>`);
 }

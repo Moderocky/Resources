@@ -82,7 +82,7 @@ account.login = function (url = true) {
     if (url === true) url = window.location;
     window.location = 'https://github.com/login/oauth/authorize?' + http.formEncode({
         client_id: 'Iv1.5b5f5c814012e08f',
-        redirect_uri: 'http://localhost:2040/login',
+        redirect_uri:  window.location.protocol + '//' + window.location.host + '/login',
         state: session.id + '->' + encodeURI(url)
     })
 };
