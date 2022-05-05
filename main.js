@@ -98,10 +98,10 @@ async function prepareGraph(url) {
     const name = url.substring('/activity_graph/'.length, url.length-4);
     let data = '' + process.execSync('githubchart -c halloween -u ' + name).toString();
     data = data.replace(/#EEEEEE/g, 'rgba(210,210,210,0.3)');
-    data = data.replace(/#FFEE4A/g, 'rgba(169,154,255,0.9)');
-    data = data.replace(/#FFC501/g, 'rgba(154,121,255,0.9)');
-    data = data.replace(/#FE9600/g, 'rgba(178,106,255,0.9)');
-    data = data.replace(/#03001C/g, 'rgba(207,85,255,0.95)');
+    data = data.replace(/#FFEE4A/g, 'rgba(169,154,255,1)');
+    data = data.replace(/#FFC501/g, 'rgba(154,121,255,1)');
+    data = data.replace(/#FE9600/g, 'rgba(178,106,255,1)');
+    data = data.replace(/#03001C/g, 'rgba(207,85,255,1)');
     data = data.replace(/#767676/g, 'rgba(210,210,210,1)');
     system.writeFileSync(file, data);
 }
