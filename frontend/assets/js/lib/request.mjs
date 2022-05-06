@@ -40,7 +40,7 @@ const http = {
             mode: mode,
             headers: headers
         }).catch(error => {
-            console.log('Error fetching ' + url + tail + ' -> '+ error);
+            console.log('Error fetching ' + url + tail + ' -> ' + error);
         });
     }
 }
