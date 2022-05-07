@@ -1,7 +1,7 @@
-
 import {http} from "./request.mjs";
 import {session} from "./session.mjs";
 import {GitHub} from "./github.mjs";
+
 const api = '/api';
 
 class Account {
@@ -11,6 +11,7 @@ class Account {
     id;
     banned;
     roles = [];
+    _promise;
 
     constructor(id, user) {
         this.id = id;
@@ -51,9 +52,8 @@ class Account {
         if (this.resolved || this._lock) return;
         this._lock = true;
         let data;
-        if (/^\d+$/g.test(this.id + '')) {
-            data = await http.get(api + '/users/' + this.id).then(JSON.parse);
-        } else {
+        if (/^\d+$/g.test(this.id + '')) data = await http.get(api + '/users/' + this.id).then(JSON.parse);
+        else {
             const user = await this.getUser();
             data = await http.get(api + '/users/' + user.id).then(JSON.parse);
         }
@@ -63,7 +63,6 @@ class Account {
         return this;
     }
 
-    _promise;
     async awaitReady() {
         if (this.resolved) return this;
         if (this._promise != null) return this._promise;
@@ -82,7 +81,7 @@ account.login = function (url = true) {
     if (url === true) url = window.location;
     window.location = 'https://github.com/login/oauth/authorize?' + http.formEncode({
         client_id: 'Iv1.5b5f5c814012e08f',
-        redirect_uri:  window.location.protocol + '//' + window.location.host + '/login',
+        redirect_uri: window.location.protocol + '//' + window.location.host + '/login',
         state: session.id + '->' + encodeURI(url)
     })
 };
