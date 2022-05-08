@@ -1,7 +1,6 @@
-
 const dom = {
     parser: new DOMParser(),
-    parse: function (text, type= 'text/html') {
+    parse: function (text, type = 'text/html') {
         return this.parser.parseFromString(text, type || 'text/xml');
     },
     _template: function (element, variables) {
@@ -47,7 +46,7 @@ const dom = {
         return element;
     },
     nodes: function (htm, variables) {
-        const data = { outer: this.create(htm, variables) };
+        const data = {outer: this.create(htm, variables)};
         let node = data.outer, test;
         while (node.hasChildNodes() && (test = node.firstChild).tagName != null) node = test;
         data.inner = node;
@@ -56,6 +55,7 @@ const dom = {
     },
     rawText: function (element) {
         let text = '', line = true;
+
         function readChildren(children) {
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
@@ -70,6 +70,7 @@ const dom = {
                 readChildren(child.childNodes);
             }
         }
+
         readChildren(element.childNodes);
         return text;
     }
@@ -79,4 +80,4 @@ function isAsync(value) {
     return (value != null && typeof value === 'function' && value.constructor.name === 'AsyncFunction');
 }
 
-export { dom };
+export {dom};
