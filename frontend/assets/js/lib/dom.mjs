@@ -55,7 +55,6 @@ const dom = {
     },
     rawText: function (element) {
         let text = '', line = true;
-
         function readChildren(children) {
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
