@@ -69,7 +69,6 @@ const dom = {
                 readChildren(child.childNodes);
             }
         }
-
         readChildren(element.childNodes);
         return text;
     }
