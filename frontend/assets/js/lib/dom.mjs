@@ -10,9 +10,7 @@ const dom = {
             let value = variables[key];
             if (value == null) continue;
             if (!isAsync(value)) continue;
-            value().then(result => {
-                template.replaceWith(document.createTextNode((result != null ? result : '').toString()));
-            }).catch(console.error);
+            value().then(result => template.replaceWith(document.createTextNode((result != null ? result : '').toString()))).catch(console.error);
         }
     },
     _create: function (htm, variables = {}) {
