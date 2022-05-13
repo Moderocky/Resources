@@ -129,9 +129,8 @@ repository.awaitReady().then(async repository => {
     for (const element of document.querySelectorAll('[data-retrieve]')) {
         let value = retrieve(element.dataset.retrieve);
         if (typeof value === 'function') {
-            if (value.constructor.name === 'AsyncFunction') {
-                element.appendChild(document.createTextNode(await value()));
-            } else element.appendChild(document.createTextNode(value()));
+            if (value.constructor.name === 'AsyncFunction') element.appendChild(document.createTextNode(await value()));
+            else element.appendChild(document.createTextNode(value()));
         } else element.appendChild(document.createTextNode(value));
     }
 });
