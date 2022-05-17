@@ -185,7 +185,5 @@ function retrieve(property = '', object = repository) {
     if (property.includes('.')) {
         let point = property.indexOf('.');
         return retrieve(property.substring(point + 1), object[property.substring(0, point)]);
-    } else {
-        return object[property];
-    }
+    } else return object[property];
 }
