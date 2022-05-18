@@ -13,9 +13,9 @@ const dom = {
             value().then(result => template.replaceWith(document.createTextNode((result != null ? result : '').toString()))).catch(console.error);
         }
     },
-    _create: function (htm, variables = {}) {
+    _create: function (htm, variables) {
         const div = document.createElement('div');
-        for (let key in variables) {
+        for (let key in variables || {}) {
             let value = variables[key];
             if (value == null) value = '';
             if (isAsync(value)) htm = htm.replaceAll('{' + key + '}', `<template data-wait-for="` + key + `"></template>`);
