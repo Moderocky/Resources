@@ -43,7 +43,7 @@ const dom = {
         div.remove();
         return element;
     },
-    nodes: function (htm, variables) {
+    nodes: function (htm, variables = {}) {
         const data = {outer: this.create(htm, variables)};
         let node = data.outer, test;
         while (node.hasChildNodes() && (test = node.firstChild).tagName != null) node = test;
