@@ -9,7 +9,7 @@ const dom = {
             const key = template.dataset.waitFor;
             let value = variables[key];
             if (value == null) continue;
-            if (!isAsync(value)) continue;
+            if (!isFunctionAsync(value)) continue;
             value().then(result => template.replaceWith(document.createTextNode((result != null ? result : '').toString()))).catch(console.error);
         }
     },
@@ -18,7 +18,7 @@ const dom = {
         for (let key in variables || {}) {
             let value = variables[key];
             if (value == null) value = '';
-            if (isAsync(value)) htm = htm.replaceAll('{' + key + '}', `<template data-wait-for="` + key + `"></template>`);
+            if (isFunctionAsync(value)) htm = htm.replaceAll('{' + key + '}', `<template data-wait-for="` + key + `"></template>`);
             else htm = htm.replaceAll('{' + key + '}', value);
         }
         div.innerHTML = htm;
@@ -53,6 +53,7 @@ const dom = {
     },
     rawText: function (element) {
         let text = '', line = true;
+
         function readChildren(children) {
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
@@ -67,13 +68,14 @@ const dom = {
                 readChildren(child.childNodes);
             }
         }
+
         readChildren(element.childNodes);
         return text;
     }
 }
 
-function isAsync(value) {
+function isFunctionAsync(value) {
     return (value != null && typeof value === 'function' && value.constructor.name === 'AsyncFunction');
 }
 
-export {dom};
+export {dom, isFunctionAsync};
