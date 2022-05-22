@@ -76,6 +76,6 @@ const dom = {
 
 function isFunctionAsync(value) {
     return (value != null && typeof value === 'function' && value.constructor.name === 'AsyncFunction');
-}a
+}
 
 export {dom, isFunctionAsync};
