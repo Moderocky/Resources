@@ -8,6 +8,7 @@ async function gitRequest(url, body) {
 }
 
 const requests = {};
+
 async function request(url, body) {
     if (url && url.includes('api.github')) {
         url = url.substring('https://api.github.com'.length);
@@ -49,9 +50,22 @@ class Git {
 
 class File extends Git {
     // GIST
-    filename;type;language;raw_url;size;
+    filename;
+    type;
+    language;
+    raw_url;
+    size;
     // REPO
-    name;path;sha;url;html_url;git_url;download_url;content;encoding;truncated;
+    name;
+    path;
+    sha;
+    url;
+    html_url;
+    git_url;
+    download_url;
+    content;
+    encoding;
+    truncated;
 
     constructor(request) {
         super(request);
@@ -89,11 +103,24 @@ class File extends Git {
 }
 
 class Gist extends Git {
-    url;forks_url;commits_url;id;node_id;
-    git_pull_url;git_push_url;html_url;
-    public;created_at;updated_at;
-    description;comments;user;comments_url;
-    owner = {};files = {};truncated;
+    url;
+    forks_url;
+    commits_url;
+    id;
+    node_id;
+    git_pull_url;
+    git_push_url;
+    html_url;
+    public;
+    created_at;
+    updated_at;
+    description;
+    comments;
+    user;
+    comments_url;
+    owner = {};
+    files = {};
+    truncated;
 
     constructor(request) {
         super(request);
@@ -132,9 +159,13 @@ class Gist extends Git {
 }
 
 class Event extends Git {
-    id;type;
-    actor = {};repo = {};payload = {};
-    public;created_at;
+    id;
+    type;
+    actor = {};
+    repo = {};
+    payload = {};
+    public;
+    created_at;
 
     constructor(request) {
         super(request);
@@ -151,10 +182,38 @@ class Event extends Git {
 }
 
 class User extends Git {
-    login;id;node_id;avatar_url;gravatar_id;
-    url;html_url;followers_url;following_url;gists_url;starred_url;subscriptions_url;organizations_url;repos_url;events_url;
+    login;
+    id;
+    node_id;
+    avatar_url;
+    gravatar_id;
+    url;
+    html_url;
+    followers_url;
+    following_url;
+    gists_url;
+    starred_url;
+    subscriptions_url;
+    organizations_url;
+    repos_url;
+    events_url;
     received_events_url;
-    type;site_admin;name;company;blog;location;email;hireable;bio;twitter_username;public_repos;public_gists;followers;following;created_at;updated_at;
+    type;
+    site_admin;
+    name;
+    company;
+    blog;
+    location;
+    email;
+    hireable;
+    bio;
+    twitter_username;
+    public_repos;
+    public_gists;
+    followers;
+    following;
+    created_at;
+    updated_at;
     display_name;
 
     constructor(request) {
@@ -203,7 +262,10 @@ class User extends Git {
 
     async getEventsByPage(page = 1, per_page = 20) {
         await this.awaitReady();
-        return GitHub.createEvent(await request(this.url + '/events', {per_page: Math.max(0, Math.min(100, per_page)), page: Math.max(1, page)}));
+        return GitHub.createEvent(await request(this.url + '/events', {
+            per_page: Math.max(0, Math.min(100, per_page)),
+            page: Math.max(1, page)
+        }));
     }
 
     async getOrganisations() {
@@ -287,13 +349,35 @@ class User extends Git {
 
 class Organisation extends User {
 
-    login;id;node_id;
-    url;repos_url;events_url;hooks_url;issues_url;members_url;public_members_url;avatar_url;
-    description;name;company;blog;location;email;twitter_username;
-    is_verified;has_organization_projects;has_repository_projects;
-    public_repos;public_gists;
-    followers;following;
-    html_url;created_at;updated_at;type;
+    login;
+    id;
+    node_id;
+    url;
+    repos_url;
+    events_url;
+    hooks_url;
+    issues_url;
+    members_url;
+    public_members_url;
+    avatar_url;
+    description;
+    name;
+    company;
+    blog;
+    location;
+    email;
+    twitter_username;
+    is_verified;
+    has_organization_projects;
+    has_repository_projects;
+    public_repos;
+    public_gists;
+    followers;
+    following;
+    html_url;
+    created_at;
+    updated_at;
+    type;
     display_name;
 
     constructor(request) {
@@ -326,16 +410,86 @@ class Organisation extends User {
 
 class Repository extends Git {
 
-    id; node_id; name; full_name; private; owner = {}; html_url; description; fork; url;
-    forks_url; keys_url; collaborators_url; teams_url; hooks_url; issue_events_url; events_url; assignees_url; branches_url; tags_url; blobs_url; git_tags_url; git_refs_url; trees_url; statuses_url; languages_url; stargazers_url; contributors_url; subscribers_url; subscription_url; commits_url; git_commits_url; comments_url; issue_comment_url; contents_url; compare_url; merges_url; archive_url; downloads_url; issues_url; pulls_url; milestones_url; notifications_url; labels_url; releases_url; deployments_url;
-    created_at; updated_at; pushed_at;
-    git_url;ssh_url;clone_url;svn_url;mirror_url;
-    homepage;size;stargazers_count;watchers_count;language;
-    has_issues;has_projects;has_downloads;has_wiki;has_pages;
-    archived;disabled;forks_count;open_issues_count;
+    id;
+    node_id;
+    name;
+    full_name;
+    private;
+    owner = {};
+    html_url;
+    description;
+    fork;
+    url;
+    forks_url;
+    keys_url;
+    collaborators_url;
+    teams_url;
+    hooks_url;
+    issue_events_url;
+    events_url;
+    assignees_url;
+    branches_url;
+    tags_url;
+    blobs_url;
+    git_tags_url;
+    git_refs_url;
+    trees_url;
+    statuses_url;
+    languages_url;
+    stargazers_url;
+    contributors_url;
+    subscribers_url;
+    subscription_url;
+    commits_url;
+    git_commits_url;
+    comments_url;
+    issue_comment_url;
+    contents_url;
+    compare_url;
+    merges_url;
+    archive_url;
+    downloads_url;
+    issues_url;
+    pulls_url;
+    milestones_url;
+    notifications_url;
+    labels_url;
+    releases_url;
+    deployments_url;
+    created_at;
+    updated_at;
+    pushed_at;
+    git_url;
+    ssh_url;
+    clone_url;
+    svn_url;
+    mirror_url;
+    homepage;
+    size;
+    stargazers_count;
+    watchers_count;
+    language;
+    has_issues;
+    has_projects;
+    has_downloads;
+    has_wiki;
+    has_pages;
+    archived;
+    disabled;
+    forks_count;
+    open_issues_count;
     license = {};
-    allow_forking;is_template;topics = [];visibility;
-    forks;open_issues;watchers;default_branch;temp_clone_token;network_count;subscribers_count;
+    allow_forking;
+    is_template;
+    topics = [];
+    visibility;
+    forks;
+    open_issues;
+    watchers;
+    default_branch;
+    temp_clone_token;
+    network_count;
+    subscribers_count;
 
     constructor(request) {
         super(request);
@@ -505,7 +659,7 @@ class GitHub {
     static getUser = (id) => {
         if (GitHub.usercache.hasOwnProperty(id + '')) return GitHub.usercache[id + ''];
         if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return GitHub.usercache.put(id, new User(request(api + '/users/' + id)));
-        else return GitHub.usercache.put(id+'', new User(request(api + '/user/' + id)));
+        else return GitHub.usercache.put(id + '', new User(request(api + '/user/' + id)));
     }
     static getUserByName = (name) => {
         if (GitHub.usercache.hasOwnProperty(name)) return GitHub.usercache[name];
