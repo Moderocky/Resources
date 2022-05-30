@@ -15,7 +15,7 @@ async function request(url, body) {
         const result = await gitRequest(url, body);
         return result.data;
     } else if (url) return JSON.parse(await http.get(url, body)).data;
-}abcdef
+}abcdefg
 
 class Git {
     _resolved = false;
