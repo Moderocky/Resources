@@ -7,7 +7,7 @@ async function gitRequest(url, body) {
     return requests[url] = await http.get(api + url, body).then(JSON.parse);
 }
 
-const requests = {};aaa
+const requests = {};
 
 async function request(url, body) {
     if (url && url.includes('api.github')) {
