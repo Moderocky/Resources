@@ -35,7 +35,7 @@
         </script>
     </section>
     <div class="">
-        <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container border-b py-1 lg:py-2.5">
+        <div class="px-6 flex flex-wrap items-center space-x-4 2xl:container py-1 lg:py-2.5">
             <div data-leading class="flex mr-auto space-x-4">
                 <img alt="Resource icon" class="w-12 h-12 rounded-lg border dark:border-gray-500" data-resource-icon
                      src="">
@@ -213,19 +213,19 @@
                                 </div>
                                 <div class="mt-4">
                                     <div class="flex flex-wrap justify-between p-4 w-full">
-                                        <div class="w-full md:w-6/12 space-y-2 text-gray-500 mr-auto">
+                                        <div class="w-full md:w-6/12 space-y-2 text-gray-500 dark:text-gray-400 mr-auto">
                                         ` + (user.company != null ? `<h3><i class="fa-solid fa-briefcase w-5"></i> ` + user.company + `</h3>` : '') + `
                                         ` + (user.twitter_username != null ? `<h3><i class="fa-brands fa-twitter w-5"></i> ` + user.twitter_username + `</h3>` : '') + `
                                         ` + (user.location != null ? `<h3><i class="fa-solid fa-map-location-dot w-5"></i> ` + user.location + `</h3>` : '') + `
                                         ` + (user.blog != null ? `<h3><i class="fa-solid fa-desktop w-5"></i> ` + user.blog + `</h3>` : '') + `
                                         </div>
                                         <div class="w-full md:w-6/12">
-                                            <div class="w-full flex h-min text-lg text-gray-600 dark:text-gray-400">
-                                                <div class="rounded-l-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 border">Following {following}</div>
+                                            <div class="w-full space-y-2 h-min text-lg text-gray-600 dark:text-gray-400">
+                                                <div class="rounded-l-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 "><i class="fa-solid fa-right-long"></i> Following {following}</div>
+                                                <div class="rounded-r-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 "><i class="fa-solid fa-left-long"></i> {followers} Followers</div>
                                                 {hire}
-                                                <div class="rounded-r-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 border">{followers} Followers</div>
                                             </div>
-                                            <div class="rounded-lg mt-4 py-1.5 px-3 border-gray-200 dark:border-gray-500 border h-min text-lg text-gray-600 dark:text-gray-400">
+                                            <div class="rounded-lg mt-4 py-1.5 px-3 border-gray-200 dark:border-gray-500  h-min text-lg text-gray-600 dark:text-gray-400">
                                                 <h3 class="text-lg mb-2">Language Proficiency</h3>
                                                 <div data-languages class="text-md flex flex-wrap text-gray-500 space-x-3"></div>
                                             </div>
@@ -236,7 +236,7 @@
                                 following: user.following || 0,
                                 followers: user.followers || 0,
                                 name: (user.name || user.login),
-                                hire: (user.hireable === true ? `<div class="py-1.5 px-3 border-gray-200 dark:border-gray-500 border-t border-b">For Hire</div>` : '')
+                                hire: (user.hireable === true ? `<div class="py-1.5 px-3 border-gray-200 dark:border-gray-500 ">For Hire</div>` : '')
                             }));
                             let container;
                             box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
