@@ -1,6 +1,6 @@
 class Language {
 
-    constructor(name = 'Unknown', icon = 'fa-solid fa-microchip', colour = 'white', description = '') {
+    constructor(name = 'Unknown', icon = 'fa-solid fa-microchip', colour = 'amber', description = '') {
         this.name = name;
         this.icon = icon;
         this.colour = colour;
