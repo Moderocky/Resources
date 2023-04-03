@@ -96,6 +96,7 @@ function generateMarkdown(text, container) {
             current = dom.createElement('div', 'section', 'py-6', 'px-6', 'mb-4', 'rounded-xl', 'bg-white', 'bg-opacity-10', 'shadow-xl');
             has = false;
         } else if (element.tagName != null && (element.tagName === 'P' || element.tagName === 'UL' || element.tagName === 'OL' || element.tagName === 'PRE' || element.tagName === 'CODE')) has = true;
+        if (element.tagName === 'H1') element.classList.add('border-b-2', 'border-gray-200', 'dark:border-gray-600');
         current.appendChild(element);
     }
     if (current != null) container.appendChild(current);
