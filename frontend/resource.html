@@ -6,6 +6,7 @@
     <script src="assets/js/load.mjs" type="module"></script>
     <script type="module">
         import {repository} from "./assets/js/load.mjs";
+
         try {
             repository.awaitReady().then(repository => {
                 document.head.insertAdjacentHTML('beforeend', `<title>Resource | ` + repository.name + `</title>`);
@@ -31,6 +32,7 @@
     <section data-header>
         <script type="module">
             import {header} from "./assets/js/blocks/header.mjs";
+
             document.querySelector('section[data-header]').replaceWith(header);
         </script>
     </section>
@@ -44,6 +46,7 @@
                 <h4 class="mt-auto md:pb-1 text-gray-400 text-2xl"></h4>
                 <script type="module">
                     import {repository} from "./assets/js/load.mjs";
+
                     const div = document.querySelector('div[data-leading]');
                     const h4 = div.querySelector('h4');
                     repository.getVersion().then(version => h4.innerText = version);
@@ -72,10 +75,10 @@
     <div class="px-4 2xl:container">
         <div class="w-full lg:my-2 flex flex-wrap">
             <div class="w-full md:w-4/12 2xl:w-3/12 p-2">
-                <div class="h-full p-4 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
-                    <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Author</h5>
-                    <div class="text-md text-white text-lg flex space-x-2 my-2 rounded-lg border-2 dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
-                        <img alt="avatar" class="rounded-l-md border-r-2 w-10 h-10" data-author-icon src="">
+                <div class="h-full py-4 px-6 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                    <h5 class="text-xl mt-2 text-gray-700 dark:text-gray-100">Author</h5>
+                    <div class="text-md text-white text-lg flex space-x-2 my-2 rounded-lg  dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
+                        <img alt="avatar" class="rounded-l-md  w-10 h-10" data-author-icon src="">
                         <p class="my-auto" data-retrieve="owner.login"></p>
                     </div>
                     <div class="mt-4">
@@ -143,6 +146,7 @@
                     import {repository} from "./assets/js/load.mjs";
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {generateMarkdown, fixMarkdown} from "./assets/js/resource.mjs";
+
                     const box = document.getElementById('latest-release').firstElementChild;
                     repository.getLatestRelease(true).then(async release => {
                         if (release == null) {
@@ -185,6 +189,7 @@
                     import {repository} from "./assets/js/load.mjs";
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {Random} from "./assets/js/lib/random.mjs";
+
                     const options = [
                         'from-pink-400/20 to-red-400/20 hover:from-pink-400/50 hover:to-red-400/50 transition',
                         'from-red-400/20 to-rose-400/20 hover:from-red-400/50 hover:to-rose-400/50 transition',
@@ -213,19 +218,19 @@
                                 </div>
                                 <div class="mt-4">
                                     <div class="flex flex-wrap justify-between p-4 w-full">
-                                        <div class="w-full md:w-6/12 space-y-2 text-gray-500 dark:text-gray-400 mr-auto">
+                                        <div class="w-full md:w-6/12 space-y-2 text-gray-500 dark:text-gray-300 mr-auto">
                                         ` + (user.company != null ? `<h3><i class="fa-solid fa-briefcase w-5"></i> ` + user.company + `</h3>` : '') + `
                                         ` + (user.twitter_username != null ? `<h3><i class="fa-brands fa-twitter w-5"></i> ` + user.twitter_username + `</h3>` : '') + `
                                         ` + (user.location != null ? `<h3><i class="fa-solid fa-map-location-dot w-5"></i> ` + user.location + `</h3>` : '') + `
                                         ` + (user.blog != null ? `<h3><i class="fa-solid fa-desktop w-5"></i> ` + user.blog + `</h3>` : '') + `
                                         </div>
                                         <div class="w-full md:w-6/12">
-                                            <div class="w-full space-y-2 h-min text-lg text-gray-600 dark:text-gray-400">
+                                            <div class="w-full space-y-2 h-min text-lg text-gray-600 dark:text-gray-300">
                                                 <div class="rounded-l-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 "><i class="fa-solid fa-right-long"></i> Following {following}</div>
                                                 <div class="rounded-r-lg py-1.5 px-3 border-gray-200 dark:border-gray-500 "><i class="fa-solid fa-left-long"></i> {followers} Followers</div>
                                                 {hire}
                                             </div>
-                                            <div class="rounded-lg mt-4 py-1.5 px-3 border-gray-200 dark:border-gray-500  h-min text-lg text-gray-600 dark:text-gray-400">
+                                            <div class="rounded-lg mt-4 py-1.5 px-3 border-gray-200 dark:border-gray-500  h-min text-lg text-gray-600 dark:text-gray-300">
                                                 <h3 class="text-lg mb-2">Language Proficiency</h3>
                                                 <div data-languages class="text-md flex flex-wrap text-gray-500 space-x-3"></div>
                                             </div>
@@ -240,6 +245,7 @@
                             }));
                             let container;
                             box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
+
                             async function details() {
                                 user.getRepositories().then(async repositories => {
                                     let i = 0;
@@ -288,6 +294,7 @@
                                     }
                                 }).catch(console.error);
                             }
+
                             details().then();
                         });
                     });
@@ -295,22 +302,27 @@
             </div>
             <div class="w-full xl:w-3/12 flex h-full flex-wrap">
                 <div class="w-full md:w-6/12 xl:w-full py-2 p-2">
-                    <div data-action-bar class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                    <div data-action-bar
+                         class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
                         <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Actions</h5>
-                        <div data-link-to-issues class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400 cursor-pointer">
+                        <div data-link-to-issues
+                             class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400 cursor-pointer">
                             <i class="fa-solid fa-bug-slash w-5"></i> Report an Issue
                         </div>
-                        <div data-link-to-releases class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-violet-500 to-fuchsia-400 cursor-pointer">
+                        <div data-link-to-releases
+                             class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-violet-500 to-fuchsia-400 cursor-pointer">
                             <i class="fa-solid fa-file-zipper w-5"></i> Releases
                         </div>
                         <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-cyan-500 to-teal-400 cursor-pointer">
                             <i class="fa-regular fa-star-half-stroke"></i> Review
                         </div>
-                        <div data-link-to-website class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-amber-500 to-yellow-400 cursor-pointer">
+                        <div data-link-to-website
+                             class="hidden w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-amber-500 to-yellow-400 cursor-pointer">
                             <i class="fa-solid fa-desktop w-5"></i> Website
                         </div>
                         <script type="module">
                             import {repository} from "./assets/js/load.mjs";
+
                             const bar = document.querySelector('[data-action-bar]');
                             bar.querySelector('[data-link-to-issues]').onclick = () => window.location = repository['html_url'] + '/issues';
                             if (repository['homepage'] != null) {
@@ -357,10 +369,15 @@
 <script type="module">
     import {fixScrollBehaviour} from "./assets/js/lib/scroll.mjs";
     import {repository} from "./assets/js/load.mjs";
+
     fixScrollBehaviour();
     addEventListener('hashchange', revealElement);
     revealElement().catch(console.error);
-    function wait(time) { return new Promise(resolve => setTimeout(resolve, time)); }
+
+    function wait(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
     async function revealElement() {
         if (location.hash.length < 1) return;
         const anchor = location.hash.substring(1);
@@ -372,6 +389,7 @@
         node.classList.remove('hidden');
         node.classList.remove('opacity-0');
     }
+
     repository.awaitReady().then(async () => {
         await wait(350);
         document.body.classList.remove('opacity-0');
