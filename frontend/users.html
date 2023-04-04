@@ -68,10 +68,12 @@
                 Account.getUserIDs().then(request => {
                     for (let id of request.value) {
                         const user = new Account(id);
-                        user.awaitReady().then(user => {
-                            const box = card(user);
+                        user.awaitReady().then(async user => {
+                            const box = card({...user, ...await user.getUser()});
                             container.appendChild(box);
-                        })
+                            await wait(50);
+                            box.classList.remove('opacity-0');
+                        });
                     }
                 });
                 section.classList.remove('hidden');
