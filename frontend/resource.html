@@ -146,7 +146,6 @@
                     import {repository} from "./assets/js/load.mjs";
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {generateMarkdown, fixMarkdown} from "./assets/js/resource.mjs";
-
                     const box = document.getElementById('latest-release').firstElementChild;
                     repository.getLatestRelease(true).then(async release => {
                         if (release == null) {
