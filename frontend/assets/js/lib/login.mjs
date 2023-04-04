@@ -74,7 +74,7 @@ class Account {
     static getUsers = async () => {
         const users = [];
         const data = await http.get(api + '/users/').then(JSON.parse);
-        for (let datum of data) users.push(new Account(datum, await GitHub.getUser(datum).awaitReady()));
+        for (let datum of data.value) users.push(new Account(datum, await GitHub.getUser(datum).awaitReady()));
         return users;
     }
 

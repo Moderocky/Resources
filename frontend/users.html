@@ -65,8 +65,8 @@
                 container = section.firstElementChild.firstElementChild;
             const id = http.current()['id'];
             if (id == null) {
-                Account.getUserIDs().then(ids => {
-                    for (let id of ids) {
+                Account.getUserIDs().then(request => {
+                    for (let id of request.value) {
                         const user = new Account(id);
                         user.awaitReady().then(user => {
                             const box = card(user);
