@@ -11,6 +11,7 @@ class Account {
     id;
     banned;
     roles = [];
+    resources = [];
     _promise;
 
     constructor(id, user) {
@@ -22,6 +23,10 @@ class Account {
 
     isAdmin() {
         return this.roles.includes('admin');
+    }
+
+    isStaff() {
+        return this.roles.includes('staff');
     }
 
     isBanned() {

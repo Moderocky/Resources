@@ -60,6 +60,7 @@
             import {http} from "./assets/js/lib/request.mjs";
             import {Account} from "./assets/js/lib/login.mjs";
             import {card} from "./assets/js/blocks/user_card.mjs";
+            import {wait} from "./assets/js/lib/wait.mjs";
 
             const section = document.querySelector('section[data-user-list]'),
                 container = section.firstElementChild.firstElementChild;
@@ -69,8 +70,9 @@
                     for (let id of request.value) {
                         const user = new Account(id);
                         user.awaitReady().then(async user => {
-                            const box = card({...user, ...await user.getUser()});
-                            container.appendChild(box);
+                            const data = {...user, ...await user.getUser()};
+                            let box = card(data);
+                            box = container.appendChild(box);
                             await wait(50);
                             box.classList.remove('opacity-0');
                         });
