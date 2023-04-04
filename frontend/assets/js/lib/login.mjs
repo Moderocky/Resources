@@ -78,6 +78,10 @@ class Account {
         return users;
     }
 
+    static getUserIDs = async () => {
+        return await http.get(api + '/users/').then(JSON.parse);
+    }
+
 }
 
 const account = new Account(null);

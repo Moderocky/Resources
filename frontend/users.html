@@ -7,7 +7,8 @@
     <meta name="description" content="Learn about Syzygy, ByteSkript's public resource distribution centre."/>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/14147477?v=4"/>
     <meta name="keywords" content="users, byteskript, byte, skript, syzygy, resources, forums, marketplace, library"/>
-    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          rel="stylesheet"/>
     <script>
         try {
             let query;
@@ -31,7 +32,9 @@
                 document
                     .querySelector('head title').innerText = 'Syzygy | User Profile';
             }
-        } catch (error) {console.log(error)}
+        } catch (error) {
+            console.log(error)
+        }
         document.currentScript.parentElement.removeChild(document.currentScript);
     </script>
     <script src="assets/js/lib/tailwind.js"></script>
@@ -42,6 +45,7 @@
     <section data-header>
         <script type="module">
             import {header} from "./assets/js/blocks/header.mjs";
+
             document.querySelector('section[data-header]').replaceWith(header);
         </script>
     </section>
@@ -53,12 +57,23 @@
             </div>
         </div>
         <script type="module">
-            import {dom} from "./assets/js/lib/dom.mjs";
             import {http} from "./assets/js/lib/request.mjs";
-            const section = document.querySelector('section[data-user-list]'), container = section.firstElementChild.firstElementChild;
+            import {Account} from "./assets/js/lib/login.mjs";
+            import {card} from "./assets/js/blocks/user_card.mjs";
+
+            const section = document.querySelector('section[data-user-list]'),
+                container = section.firstElementChild.firstElementChild;
             const id = http.current()['id'];
             if (id == null) {
-                container.appendChild(dom.create(`<h2>HELLO</h2>`)); // todo
+                Account.getUserIDs().then(ids => {
+                    for (let id of ids) {
+                        const user = new Account(id);
+                        user.awaitReady().then(user => {
+                            const box = card(user);
+                            container.appendChild(box);
+                        })
+                    }
+                });
                 section.classList.remove('hidden');
                 section.querySelector('script').remove();
             }
@@ -78,6 +93,7 @@
                             import {date} from "./assets/js/lib/date.mjs";
                             import {statistics} from "./assets/js/blocks/statistics.mjs";
                             import {chart} from "./assets/js/blocks/activity_chart.mjs";
+
                             const id = http.current()['id'];
                             if (id == null) document.querySelector('section[data-user-profile]').remove();
                             else GitHub.getUser(id).awaitReady().then(async user => {
@@ -102,7 +118,7 @@
                                 GitHub.getRepository(483594530).isContributor(user).then(value => {
                                     if (value) badges.appendChild(dom.create(`<span class="uppercase text-sm bg-emerald-400 rounded-md scale-90 px-1 w-min">contributor</span>`));
                                 });
-                                const lastWeek = date.plus((-24*7)), lastMonth = date.plus((-24*30));
+                                const lastWeek = date.plus((-24 * 7)), lastMonth = date.plus((-24 * 30));
                                 user.getEventsAfter(lastWeek).then(events => {
                                     const data = {
                                         pushes: events.filter(event => event.type === 'PushEvent').length,
@@ -127,17 +143,18 @@
                 <div class="w-full">
                     <div data-user-statistics class="w-full h-full p-2 transition-opacity">
                         <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">
-                            <img data-activity-graph class="opacity-0 transition-opacity w-full" src="" alt="Commit streak.">
+                            <img data-activity-graph class="opacity-0 transition-opacity w-full" src=""
+                                 alt="Commit streak.">
                         </div>
                     </div>
                 </div>
-<!--                <div class="w-full">-->
-<!--                    <div data-user-statistics class="w-full h-full p-2 transition-opacity">-->
-<!--                        <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">-->
-<!--                            <canvas data-user-graph></canvas>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <!--                <div class="w-full">-->
+                <!--                    <div data-user-statistics class="w-full h-full p-2 transition-opacity">-->
+                <!--                        <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">-->
+                <!--                            <canvas data-user-graph></canvas>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
         </div>
     </section>
