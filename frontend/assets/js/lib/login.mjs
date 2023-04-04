@@ -17,8 +17,7 @@ class Account {
         this.id = id;
         if (id == null) return;
         this.awaitReady().then();
-        if (user) this.valid = !!(this.user = user);
-        else this.getUser().then();
+        if (user) this.valid = !!(this.user = user); else this.getUser().then();
     }
 
     isAdmin() {
@@ -52,8 +51,7 @@ class Account {
         if (this.resolved || this._lock) return;
         this._lock = true;
         let data;
-        if (/^\d+$/g.test(this.id + '')) data = await http.get(api + '/users/' + this.id).then(JSON.parse);
-        else {
+        if (/^\d+$/g.test(this.id + '')) data = await http.get(api + '/users/' + this.id).then(JSON.parse); else {
             const user = await this.getUser();
             data = await http.get(api + '/users/' + user.id).then(JSON.parse);
         }
@@ -71,6 +69,13 @@ class Account {
         delete this._promise;
         this.resolved = true;
         return this;
+    }
+
+    static getUsers = async () => {
+        const users = [];
+        const data = await http.get(api + '/users/').then(JSON.parse);
+        for (let datum of data) users.push(new Account(datum, await GitHub.getUser(datum).awaitReady()));
+        return users;
     }
 
 }
