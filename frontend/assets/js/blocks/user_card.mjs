@@ -1,6 +1,6 @@
 import {dom} from "../lib/dom.mjs";
 export const card = (user) => dom.create(`
-        <div class="w-full md:w-3/12 p-2 opacity-0 transition-opacity">
+        <div class="w-full md:w-6/12 lg:w-4/12 xl:w-3/12 p-2 opacity-0 transition-opacity">
             <div aria-label="{full_name}" 
                 onclick="window.location.href = '/users?id={id}'" 
                 class="select-none cursor-pointer p-1 h-full rounded-xl group sm:flex space-x-6 
@@ -15,7 +15,7 @@ export const card = (user) => dom.create(`
                 <div class="sm:w-8/12 pl-0 p-5 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
-                            <h4 class="text-2xl font-semibold">{name}` + (user.admin
+                            <h4 class="text-2xl font-semibold">{name} ` + (user.admin
                                 ? `<i class="fa-solid fa-crown"></i>`
                                 : user.roles.includes('staff')
                                 ? `<i class="fa-solid fa-gavel"></i>`
