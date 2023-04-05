@@ -22,7 +22,9 @@ class RequestCache {
     async get(url) {
         if (this.data.hasOwnProperty(url)) {
             const date = this.data[url].date;
-            if (date.getTime() < new Date().getTime()) {
+            const since = new Date();
+            since.setHours(since.getHours() - this.hours);
+            if (date.getTime() < since.getTime()) {
                 const result = await octokit.request('GET ' + url);
                 this.store(url, result).then();
                 if (debugMode) console.log("Fetched data.");
@@ -54,17 +56,16 @@ class RequestCache {
     }
 
     async store(url, value) {
-        const date = new Date();
-        date.setHours(date.getHours() + this.hours);
         this.data[url] = {
             value: value,
-            date: date
+            date: new Date()
         }
         this.cleanUp().then();
     }
 
     async cleanUp() {
         const date = new Date();
+        date.setHours(date.getHours() - this.hours);
         for (let key in this.data) {
             if (this.data[key].date.getTime() < date.getTime()) delete this.data[key];
         }
