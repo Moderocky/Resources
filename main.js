@@ -10,6 +10,7 @@ const {database, Query} = require('./data');
 const {Octokit} = require("@octokit/rest");
 let token = system.readFileSync('token.txt', 'utf8').trim();
 let secret = system.readFileSync('secret.txt', 'utf8').trim();
+const debugMode = true; // todo
 const octokit = new Octokit({auth: token});
 const usercache = {};
 
@@ -24,6 +25,7 @@ class RequestCache {
             if (date.getTime() < new Date().getTime()) {
                 const result = await octokit.request('GET ' + url);
                 this.store(url, result).then();
+                if (debugMode) console.log("Fetched data.");
                 return result;
             } else {
                 try {
@@ -34,8 +36,10 @@ class RequestCache {
                             'If-Modified-Since': date.toUTCString()
                         },
                     });
+                    if (debugMode) console.log("Asked for old data.");
                     if (result.status === 304) return this.data[url].value;
                     this.store(url, result).then();
+                    if (debugMode) console.log("Replaced with new data.");
                     return result;
                 } catch (error) {
                     return this.data[url].value;
@@ -44,6 +48,7 @@ class RequestCache {
         } else {
             const result = await octokit.request('GET ' + url);
             this.store(url, result).then();
+            if (debugMode) console.log("Fetched data.");
             return result;
         }
     }
@@ -71,6 +76,7 @@ const cache = new RequestCache();
 http.createServer(handle).listen(2040);
 
 async function handle(request, response) {
+    if (debugMode) console.log(request.url);
     if (request.url.startsWith('/login')) {
         await login(request, response);
     } else if (request.url.startsWith('/api')) {
@@ -108,6 +114,7 @@ async function prepareGraph(url) {
 
 function getFrontendFile(url, response) {
     let link = 'frontend' + url.split(/[?#]/)[0];
+    if (url === '/') link = link + 'home';
     if (link.indexOf('.') < 0) link = link + '.html';
     if (system.existsSync(link)) {
         const data = system.readFileSync(link, 'utf8');
@@ -116,7 +123,8 @@ function getFrontendFile(url, response) {
         return data;
     } else {
         response.writeHead(404);
-        return `<script>window.location = 'https://resources.byteskript.org/home';</script>`;
+        if (debugMode) return `No page found at ` + link;
+        else return `<script>window.location = 'https://resources.byteskript.org/home';</script>`;
     }
 }
 
@@ -165,7 +173,7 @@ async function login(request, response) {
         } else {
             response.write(`<script type="module">
                 import {login} from "./assets/js/lib/login.mjs";
-                login('https://resources.byteskript.org/home').then();
+                login().then(); //'https://resources.byteskript.org/home'
             </script>`);
             response.end();
         }
