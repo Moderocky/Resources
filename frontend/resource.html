@@ -49,7 +49,7 @@
 
                     const div = document.querySelector('div[data-leading]');
                     const h4 = div.querySelector('h4');
-                    repository.getVersion().then(version => h4.innerText = version);
+                    repository.getVersion().then(version => h4.innerText = version || '');
                     div.querySelector('script').remove();
                 </script>
             </div>
