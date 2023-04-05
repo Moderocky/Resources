@@ -65,22 +65,39 @@
             const section = document.querySelector('section[data-user-list]'),
                 container = section.firstElementChild.firstElementChild;
             const id = http.current()['id'];
-            if (id == null) {
-                Account.getUserIDs().then(request => {
-                    for (let id of request.value) {
-                        const user = new Account(id);
-                        user.awaitReady().then(async user => {
-                            const data = {...user, ...await user.getUser()};
-                            let box = card(data);
-                            box = container.appendChild(box);
-                            await wait(50);
-                            box.classList.remove('opacity-0');
-                        });
-                    }
-                });
-                section.classList.remove('hidden');
+            const accounts = [];
+            const users = {};
+            let fetch;
+            if (id != null) {
                 section.querySelector('script').remove();
+                fetch = null;
+            } else fetch = Account.getUserIDs().then(request => {
+                for (let id of request.value) {
+                    accounts.push(id);
+                    users[id] = getUser(id);
+                }
+            });
+            function getUser(id) {
+                if (users[id]) return users[id];
+                return users[id] = new Account(id);
             }
+            async function display() {
+                section.classList.add('hidden');
+                container.innerHTML = '';
+                await fetch;
+                for (let id of accounts) {
+                    const user = getUser(id);
+                    user.awaitReady().then(async user => {
+                        const data = {...user, ...await user.getUser()};
+                        let box = card(data);
+                        box = container.appendChild(box);
+                        await wait(50);
+                        box.classList.remove('opacity-0');
+                    });
+                }
+                section.classList.remove('hidden');
+            }
+            display();
         </script>
     </section>
     <section data-user-profile class="hidden">
@@ -102,6 +119,7 @@
                             if (id == null) document.querySelector('section[data-user-profile]').remove();
                             else GitHub.getUser(id).awaitReady().then(async user => {
                                 document.querySelector('section[data-user-list]').remove();
+                                for (let element of document.querySelectorAll('section[data-user-search]')) element.remove();
                                 const account = new Account(id, user);
                                 await account.awaitReady();
                                 if (!account.valid) {
