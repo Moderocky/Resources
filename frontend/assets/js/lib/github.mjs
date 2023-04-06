@@ -603,6 +603,10 @@ class GitHub {
         put: (id, user) => this[id] = user
     }
 
+    static repositorycache = {
+        put: (id, repository) => this[id] = repository
+    }
+
     static contents = (link) => link + '/contents';
     static releases = (link) => link + '/releases';
     static languages = (link) => link + '/languages';
@@ -671,9 +675,11 @@ class GitHub {
         return GitHub.usercache.put(name, new User(request(api + '/users/' + name)));
     }
     static getRepository = (id) => {
+        if (GitHub.repositorycache.hasOwnProperty(id + '')) return GitHub.repositorycache[id + ''];
         if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return new Repository(request(api + '/repos/' + id)); else return new Repository(request(api + '/repositories/' + id));
     }
     static getRepositoryByName = (user, name) => {
+        if (GitHub.repositorycache.hasOwnProperty(name + '')) return GitHub.repositorycache[name + ''];
         if (name) return new Repository(request(api + '/repos/' + user + '/' + name)); else return new Repository(request(api + '/repos/' + user));
     }
     static getFile = (url) => {
