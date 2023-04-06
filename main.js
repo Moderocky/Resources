@@ -22,36 +22,33 @@ class RequestCache {
     async get(url) {
         if (this.data.hasOwnProperty(url)) {
             const date = this.data[url].date;
-            const since = new Date();
-            since.setHours(since.getHours() - this.hours);
-            if (date.getTime() < since.getTime()) {
-                const result = await octokit.request('GET ' + url);
+            try {
+                const result = await octokit.request({
+                    method: 'GET',
+                    url: url,
+                    headers: {
+                        'If-Modified-Since': date.toUTCString()
+                    },
+                });
+                if (debugMode) console.log("Asked for old data.");
+                if (result.status === 304) return this.data[url].value;
                 this.store(url, result).then();
-                if (debugMode) console.log("Fetched data.");
+                if (debugMode) console.log("Replaced with new data.");
                 return result;
-            } else {
-                try {
-                    const result = await octokit.request({
-                        method: 'GET',
-                        url: url,
-                        headers: {
-                            'If-Modified-Since': date.toUTCString()
-                        },
-                    });
-                    if (debugMode) console.log("Asked for old data.");
-                    if (result.status === 304) return this.data[url].value;
-                    this.store(url, result).then();
-                    if (debugMode) console.log("Replaced with new data.");
-                    return result;
-                } catch (error) {
-                    return this.data[url].value;
-                }
+            } catch (error) {
+                return this.data[url].value;
             }
-        } else {
+        } else try {
             const result = await octokit.request('GET ' + url);
             this.store(url, result).then();
             if (debugMode) console.log("Fetched data.");
             return result;
+        } catch (error) {
+            if (debugMode) {
+                console.log("Error.");
+                console.log(error);
+            }
+            return null;
         }
     }
 
