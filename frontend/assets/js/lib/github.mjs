@@ -10,11 +10,17 @@ async function gitRequest(url, body) {
 const requests = {};
 
 async function request(url, body) {
-    if (url && url.includes('api.github')) {
-        url = url.substring('https://api.github.com'.length);
-        const result = await gitRequest(url, body);
-        return result.data;
-    } else if (url) return JSON.parse(await http.get(url, body)).data;
+    try {
+        if (url && url.includes('api.github')) {
+            url = url.substring('https://api.github.com'.length);
+            const result = await gitRequest(url, body);
+            return result.data;
+        } else if (url) return JSON.parse(await http.get(url, body)).data;
+    } catch (error) {
+        console.error(`Error in request to "${url}".`);
+        console.log(body);
+        console.log(error);
+    }
 }
 
 class Git {
@@ -85,8 +91,7 @@ class File extends Git {
 
     async getContent() {
         await this.awaitReady();
-        if (this.content && this.encoding === 'base64' && !this.truncated) return atob(this.content);
-        else if (this.content && !this.encoding && !this.truncated) return this.content;
+        if (this.content && this.encoding === 'base64' && !this.truncated) return atob(this.content); else if (this.content && !this.encoding && !this.truncated) return this.content;
         return this.content = await request(await this.getRawURL());
     }
 
@@ -261,8 +266,7 @@ class User extends Git {
     async getEventsByPage(page = 1, per_page = 20) {
         await this.awaitReady();
         return GitHub.createEvent(await request(this.url + '/events', {
-            per_page: Math.max(0, Math.min(100, per_page)),
-            page: Math.max(1, page)
+            per_page: Math.max(0, Math.min(100, per_page)), page: Math.max(1, page)
         }));
     }
 
@@ -272,7 +276,11 @@ class User extends Git {
         try {
             this._organisations = new Promise(async resolve => {
                 const data = await request(this.organizations_url), array = [];
-                for (let org in data) array.push(GitHub.getOrganisation(org.id))
+                for (let org of data) {
+                    const organisation = GitHub.getOrganisation(org.id);
+                    Object.assign(organisation, org);
+                    array.push(organisation);
+                }
                 resolve(array);
             });
             return await this._organisations;
@@ -288,7 +296,12 @@ class User extends Git {
             this._repositories = new Promise(async resolve => {
                 const list = await request(this['repos_url']);
                 const array = [];
-                for (let repo of list) array.push(GitHub.createRepository(repo));
+                for (let repo of list) {
+                    const repository = GitHub.getRepository(repo.id);
+                    Object.assign(repository, GitHub.createRepository(repo));
+                    repository.resolved = false;
+                    array.push(repository);
+                }
                 resolve(array);
             });
             return await this._repositories;
@@ -326,8 +339,7 @@ class User extends Git {
                     if (repository['fork']) continue;
                     const languages = await repository.getLanguages();
                     for (let key in languages) {
-                        if (object.hasOwnProperty(key)) object[key] += languages[key];
-                        else object[key] = languages[key];
+                        if (object.hasOwnProperty(key)) object[key] += languages[key]; else object[key] = languages[key];
                     }
                 }
                 resolve(object);
@@ -511,8 +523,7 @@ class Repository extends Git {
     async getLatestRelease(draft = false) {
         await this.awaitReady();
         try {
-            if (draft) return GitHub.createRelease((await this.getReleases())[0]);
-            else return GitHub.createRelease((await request(GitHub.releases(this.url) + '/latest')));
+            if (draft) return GitHub.createRelease((await this.getReleases())[0]); else return GitHub.createRelease((await request(GitHub.releases(this.url) + '/latest')));
         } catch (error) {
             return null;
         }
@@ -576,15 +587,13 @@ class Repository extends Git {
 
     async isContributor(user) {
         const members = await this.getContributors();
-        if (user instanceof User) for (let member of members) if (member.id === user.id) return true;
-        else for (let member of members) if ((member.id + '') === (user.id + '')) return true;
+        if (user instanceof User) for (let member of members) if (member.id === user.id) return true; else for (let member of members) if ((member.id + '') === (user.id + '')) return true;
         return false;
     }
 
     async isOwner(user) {
         const owner = await this.getOwner();
-        if (user instanceof User) return owner.id === user.id;
-        else return (owner.id + '') === (user.id + '');
+        if (user instanceof User) return owner.id === user.id; else return (owner.id + '') === (user.id + '');
     }
 }
 
@@ -651,25 +660,21 @@ class GitHub {
     };
     static parseDate = (time) => new Date(time);
     static getOrganisation = (id) => {
-        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return new Organisation(request(api + '/orgs/' + id));
-        else return new Organisation(request(api + '/organizations/' + id));
+        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return new Organisation(request(api + '/orgs/' + id)); else return new Organisation(request(api + '/organizations/' + id));
     }
     static getUser = (id) => {
         if (GitHub.usercache.hasOwnProperty(id + '')) return GitHub.usercache[id + ''];
-        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return GitHub.usercache.put(id, new User(request(api + '/users/' + id)));
-        else return GitHub.usercache.put(id + '', new User(request(api + '/user/' + id)));
+        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return GitHub.usercache.put(id, new User(request(api + '/users/' + id))); else return GitHub.usercache.put(id + '', new User(request(api + '/user/' + id)));
     }
     static getUserByName = (name) => {
         if (GitHub.usercache.hasOwnProperty(name)) return GitHub.usercache[name];
         return GitHub.usercache.put(name, new User(request(api + '/users/' + name)));
     }
     static getRepository = (id) => {
-        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return new Repository(request(api + '/repos/' + id));
-        else return new Repository(request(api + '/repositories/' + id));
+        if ((typeof id === 'string' || id instanceof String) && !/^\d+$/g.test(id)) return new Repository(request(api + '/repos/' + id)); else return new Repository(request(api + '/repositories/' + id));
     }
     static getRepositoryByName = (user, name) => {
-        if (name) return new Repository(request(api + '/repos/' + user + '/' + name));
-        else return new Repository(request(api + '/repos/' + user));
+        if (name) return new Repository(request(api + '/repos/' + user + '/' + name)); else return new Repository(request(api + '/repos/' + user));
     }
     static getFile = (url) => {
         return new File(request(url));
