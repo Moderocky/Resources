@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <title>Syzygy | Post</title>
+    <meta name="description" content="Publish a new resource."/>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/14147477?v=4"/>
+    <meta name="keywords"
+          content="post, resource, byteskript, byte, skript, syzygy, resources, forums, marketplace, library"/>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          rel="stylesheet"/>
+    <script src="assets/js/lib/tailwind.js"></script>
+    <link href="assets/css/style.css" rel="stylesheet"/>
+</head>
+<body class="dark:bg-gray-800 dark:text-gray-300 opacity-0 transition-opacity">
+<div class="mx-auto mb-6 lg:w-[75%] xl:w-[75%] 2xl:w-[80%]">
+    <section data-header>
+        <script type="module">
+            import {header} from "./assets/js/blocks/header.mjs";
+
+            document.querySelector('section[data-header]').replaceWith(header);
+        </script>
+    </section>
+    <section>
+        <div data-content class="m-2 flex flex-wrap">
+            <div class="w-full lg:w-9/12 xl:w-8/12 p-2">
+                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+
+                    <label for="choose-account">Account</label>
+                    <select data-choose-account id="choose-account"
+                            class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Choose an Account</option>
+                    </select>
+
+                </div>
+                <div class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+
+                    <label for="choose-repository">Repository</label>
+                    <select data-choose-repository id="choose-repository"
+                            class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Choose a Repository</option>
+                    </select>
+
+                </div>
+                <script type="module">
+                    import {dom} from "./assets/js/lib/dom.mjs";
+                    import {Account, account} from "./assets/js/lib/login.mjs";
+                    import {GitHub, User} from "./assets/js/lib/github.mjs";
+                    import {countDownloads, retrieve} from "./assets/js/lib/repository_utils.mjs";
+
+                    const data = {users: {}, repositories: {}};
+
+                    async function updateRepositoryList(id) {
+                        const user = data.users[id] || await account.getUser();
+                        const select = document.querySelector('select[data-choose-repository]');
+                        select.innerHTML = `<option selected>Choose a Repository</option>`;
+                        select.value = null;
+                        const repositories = await user.getRepositories() || [];
+                        for (const repository of repositories) {
+                            await repository.awaitReady();
+                            select.appendChild(dom.create(`<option value="${repository.id}">${repository.name}</option>`));
+                            data.repositories[repository.id] = repository;
+                        }
+                        select.onchange = () => chooseRepository(select.value);
+                    }
+
+                    async function chooseRepository(id) {
+                        const repository = data.repositories[id] || null;
+                        if (!repository) return;
+                        repository.awaitReady().then(async () => {
+                            for (const element of document.querySelectorAll('[data-statistics] [data-retrieve]')) {
+                                element.innerHTML = '';
+                                let value = retrieve(element.dataset.retrieve, repository);
+                                if (typeof value === 'function') {
+                                    if (value.constructor.name === 'AsyncFunction') element.appendChild(document.createTextNode((await value()) || '0'));
+                                    else element.appendChild(document.createTextNode(value() || '0'));
+                                } else element.appendChild(document.createTextNode(value || '0'));
+                            }
+                            await countDownloads(repository);
+                        });
+                    }
+
+                    account.getUser().then(async user => {
+                        const select = document.querySelector('select[data-choose-account]');
+                        select.appendChild(dom.create(`<option value="${user.id}">${user.name || user.login}</option>`));
+                        data.users[user.id] = user;
+                        select.value = user.id;
+                        updateRepositoryList(user.id).then();
+                        select.onchange = () => updateRepositoryList(select.value);
+                        const organisations = await user.getOrganisations() || [];
+                        for (const organisation of organisations) {
+                            await organisation.awaitReady();
+                            select.appendChild(dom.create(`<option value="${organisation.id}">${organisation.login}</option>`));
+                            data.users[organisation.id] = organisation;
+                        }
+                    });
+                </script>
+            </div>
+            <div class="w-full lg:w-3/12 xl:w-4/12 py-2 p-2">
+                <div data-statistics
+                     class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                    <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Statistics</h5>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-violet-400">
+                        <i class="fa-regular fa-eye w-4"></i> <span data-retrieve="subscribers_count">0</span>
+                        Watchers
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-sky-500 to-cyan-400">
+                        <i class="fa-solid fa-download w-4"></i> <span data-downloads-count>0</span> Downloads
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-400">
+                        <i class="fa-solid fa-code-fork w-4"></i> <span data-retrieve="forks_count">0</span> Forks
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-orange-500 to-amber-400">
+                        <i class="fa-regular fa-star w-4"></i> <span data-retrieve="stargazers_count">0</span> Stars
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400">
+                        <i class="fa-solid fa-bug w-4"></i> <span data-retrieve="open_issues_count">0</span> Issues
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    document.body.classList.remove('opacity-0');
+    document.currentScript.parentElement.removeChild(document.currentScript);
+</script>
+</body>
+</html>
