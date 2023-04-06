@@ -10,8 +10,23 @@ const {database, Query} = require('./data');
 const {Octokit} = require("@octokit/rest");
 let token = system.readFileSync('token.txt', 'utf8').trim();
 let secret = system.readFileSync('secret.txt', 'utf8').trim();
-const debugMode = true; // todo
-const octokit = new Octokit({auth: token});
+const debugMode = false;
+const octokit = new Octokit({
+    auth: token, throttle: {
+        onRateLimit: (retryAfter, options) => {
+            octokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`);
+
+            // Retry twice after hitting a rate limit error, then give up
+            if (options.request.retryCount <= 2) {
+                console.log(`Retrying after ${retryAfter} seconds!`);
+                return true;
+            }
+        }, onSecondaryRateLimit: (retryAfter, options, octokit) => {
+            // does not retry, only logs a warning
+            octokit.log.warn(`Secondary quota detected for request ${options.method} ${options.url}`);
+        }
+    },
+});
 const usercache = {};
 
 class RequestCache {
@@ -21,24 +36,24 @@ class RequestCache {
 
     async get(url) {
         if (this.data.hasOwnProperty(url)) {
-            const date = this.data[url].date;
+            if (debugMode) console.log('Knows: ' + url);
+            const etag = this.data[url].etag || '';
             try {
                 const result = await octokit.request({
-                    method: 'GET',
-                    url: url,
-                    headers: {
-                        'If-Modified-Since': date.toUTCString()
-                    },
+                    method: 'GET', url: url, headers: {
+                        'If-None-Match': etag
+                    }
                 });
-                if (debugMode) console.log("Asked for old data.");
+                if (debugMode) console.log("Asked, got " + result.status);
                 if (result.status === 304) return this.data[url].value;
                 this.store(url, result).then();
-                if (debugMode) console.log("Replaced with new data.");
+                if (debugMode) console.log("Replaced data.");
                 return result;
             } catch (error) {
                 return this.data[url].value;
             }
         } else try {
+            if (debugMode) console.log('Wanting: ' + url);
             const result = await octokit.request('GET ' + url);
             this.store(url, result).then();
             if (debugMode) console.log("Fetched data.");
@@ -53,9 +68,10 @@ class RequestCache {
     }
 
     async store(url, value) {
-        this.data[url] = {
-            value: value,
-            date: new Date()
+        if (value.headers) this.data[url] = {
+            value: value, etag: value.headers.etag, date: new Date()
+        }; else this.data[url] = {
+            value: value, date: new Date()
         }
         this.cleanUp().then();
     }
@@ -74,7 +90,6 @@ const cache = new RequestCache();
 http.createServer(handle).listen(2040);
 
 async function handle(request, response) {
-    if (debugMode) console.log(request.url);
     if (request.url.startsWith('/login')) {
         await login(request, response);
     } else if (request.url.startsWith('/api')) {
@@ -99,7 +114,7 @@ async function prepareGraph(url) {
         const stat = system.statSync(file);
         if ((Math.abs(stat.birthtime - new Date()) / 36e5) < 2) return;
     }
-    const name = url.substring('/activity_graph/'.length, url.length-4);
+    const name = url.substring('/activity_graph/'.length, url.length - 4);
     let data = '' + process.execSync('githubchart -c halloween -u ' + name).toString();
     data = data.replace(/#EEEEEE/g, 'rgba(210,210,210,0.3)');
     data = data.replace(/#FFEE4A/g, 'rgba(169,154,255,1)');
@@ -121,8 +136,7 @@ function getFrontendFile(url, response) {
         return data;
     } else {
         response.writeHead(404);
-        if (debugMode) return `No page found at ` + link;
-        else return `<script>window.location = 'https://resources.byteskript.org/home';</script>`;
+        if (debugMode) return `No page found at ` + link; else return `<script>window.location = 'https://resources.byteskript.org/home';</script>`;
     }
 }
 
@@ -133,10 +147,7 @@ async function login(request, response) {
         let index = query.state.indexOf('->');
         const session = query.state.substring(0, index), exit = query.state.substring(index + 2);
         const user = {
-            id: null,
-            _id: null,
-            octokit: null,
-            ...await fetch('https://github.com/login/oauth/access_token', {
+            id: null, _id: null, octokit: null, ...await fetch('https://github.com/login/oauth/access_token', {
                 method: 'POST',
                 body: formEncode({client_id: 'Iv1.5b5f5c814012e08f', client_secret: secret, code: query.code}),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -148,7 +159,9 @@ async function login(request, response) {
             let text = user.octokit().request('GET /user').then(result => result.data.id);
             return user._id = text;
         };
-        user.id().then(id => database.putIfAbsent({id: id, admin: false, resources: [], roles: []}, 'users', id + '.json'));
+        user.id().then(id => database.putIfAbsent({
+            id: id, admin: false, resources: [], roles: []
+        }, 'users', id + '.json'));
         usercache[session] = user;
         response.write(`<script>window.location = '` + exit + `';</script>`);
         response.end();
@@ -199,8 +212,7 @@ async function api(request, response) {
 }
 
 function formEncode(content) {
-    if (content instanceof String) return content;
-    else {
+    if (content instanceof String) return content; else {
         const array = [];
         for (const key in content) if (content.hasOwnProperty(key)) array.push(key + '=' + encodeURI(content[key]));
         return array.join('&');
