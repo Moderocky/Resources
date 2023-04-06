@@ -81,6 +81,7 @@
                         });
                     }
 
+                    if (!account.isLoggedIn()) stop();
                     account.getUser().then(async user => {
                         const select = document.querySelector('select[data-choose-account]');
                         select.appendChild(dom.create(`<option value="${user.id}">${user.name || user.login}</option>`));
