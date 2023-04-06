@@ -23,7 +23,10 @@ for (const element of document.querySelectorAll('[data-readme]')) {
     repository.getFileContent('README.md').then(text => {
         generateMarkdown(text, element);
         fixMarkdown(element);
-    })
+    }).catch(reason => {
+        generateMarkdown(`No description was provided for this resource.`, element);
+        fixMarkdown(element);
+    });
 }
 
 for (const element of document.querySelectorAll('[data-version-history]')) {
@@ -82,6 +85,9 @@ for (const element of document.querySelectorAll('[data-version-history]')) {
             }
             element.appendChild(div);
         }
+    }).catch(reason => {
+        generateMarkdown(`No releases are available.`, element);
+        fixMarkdown(element);
     });
 }
 
