@@ -14,6 +14,9 @@ account.isLoggedIn().then(async (result) => {
         login.replaceChildren(dom.create(`<p class="relative flex items-center space-x-4 justify-center text-lg text-gray-700 dark:text-gray-300 transition duration-300 group-hover:text-blue-600">
                     <img alt="Avatar" class="w-6 h-6 rounded-xl" src="{avatar_url}"> <span class="block w-max font-semibold tracking-wide sm:text-base">{display_name}</span>
                 </p>`, {...user}));
+        for (let element of document.querySelectorAll('[data-if-logged-in]')) {
+            element.classList.remove('opacity-0');
+        }
     }
 });
 export {login};
