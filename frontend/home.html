@@ -21,8 +21,16 @@
     </section>
     <section>
         <div class="flex flex-wrap justify-between items-center content-center">
-            <div class="sm:p-4 w-full md:w-8/12">
-<!--                <h2 class="text-3xl font-light mx-4 small-caps">Resources</h2>-->
+            <div data-if-logged-in class="p-2 w-full md:w-4/12 h-max-content opacity-0">
+                <div class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
+                    <div class="space-y-2 flex flex-col h-full justify-between">
+                        <div class="space-y-4">
+                            <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200"><i class="fa-solid fa-file-circle-plus"></i> Post Resource</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-2 w-none md:w-4/12">
             </div>
             <div class="p-2 w-full md:w-4/12">
                 <div class="p-3 w-full text-lg rounded-full border focus:border-sky-500 transition">
@@ -37,7 +45,7 @@
     <section>
         <div class="flex flex-wrap w-full">
             <div data-sort-by="recent" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
+                <div class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Recent</h4>
@@ -47,7 +55,7 @@
                 </div>
             </div>
             <div data-sort-by="popular" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
+                <div class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Popular</h4>
@@ -57,7 +65,7 @@
                 </div>
             </div>
             <div data-sort-by="language" class="w-full sm:w-6/12 md:w-4/12 xl:w-3/14 p-2 h-max-content">
-                <div class="rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
+                <div class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Language</h4>
