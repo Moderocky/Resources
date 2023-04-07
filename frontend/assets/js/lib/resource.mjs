@@ -1,4 +1,3 @@
-
 import {GitHub} from "./github.mjs";
 import {http} from "./request.mjs";
 
@@ -6,6 +5,7 @@ class Resource {
     id;
     owner;
     tag_line = '';
+    icon;
     _repository;
     _owner;
 
@@ -21,11 +21,17 @@ class Resource {
         return false;
     }
 
+    static async exists(id) {
+        return (await this.getByID(id)).isValid();
+    }
+
     static async getByID(id) {
         const resource = new Resource();
         resource.id = id;
         try {
-            const data = await http.get('/api/resources/' + id).then(JSON.parse);
+            const data = await http.get('/api/resources/' + id).then(JSON.parse).then(data => data.value);
+            if (!data || Object.keys(data).length === 0) return resource;
+            console.log(data); // todo
             Object.assign(resource, data);
             resource.isValid = () => true;
         } catch (error) {
@@ -44,3 +50,5 @@ class Resource {
     }
 
 }
+
+export {Resource}

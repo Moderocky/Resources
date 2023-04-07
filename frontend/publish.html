@@ -26,7 +26,6 @@
         <div data-content class="m-2 flex flex-wrap">
             <div class="w-full lg:w-9/12 xl:w-8/12 p-2">
                 <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
-
                     <label for="choose-account">Account</label>
                     <select data-choose-account id="choose-account"
                             class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -34,19 +33,32 @@
                     </select>
 
                 </div>
-                <div class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
-
+                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
                     <label for="choose-repository">Repository</label>
                     <select data-choose-repository id="choose-repository"
                             class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Choose a Repository</option>
                     </select>
+                </div>
+                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+
+                    <div class="mb-6">
+                        <label for="success" class="block mb-2 text-sm font-medium text-green-700 dark:text-green-500">Your name</label>
+                        <input type="text" id="success" class="bg-green-50 border border-green-500 text-green-900 dark:text-green-400 placeholder-green-700 dark:placeholder-green-500 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-green-500" placeholder="Success input">
+                        <p class="mt-2 text-sm text-green-600 dark:text-green-500"><span class="font-medium">Well done!</span> Some success message.</p>
+                    </div>
+                    <div>
+                        <label for="error" class="block mb-2 text-sm font-medium text-red-700 dark:text-red-500">Your name</label>
+                        <input type="text" id="error" class="bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-2.5 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500" placeholder="Error input">
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">Oh, snapp!</span> Some error message.</p>
+                    </div>
 
                 </div>
                 <script type="module">
                     import {dom} from "./assets/js/lib/dom.mjs";
                     import {Account, account} from "./assets/js/lib/login.mjs";
                     import {GitHub, User} from "./assets/js/lib/github.mjs";
+                    import {Resource} from "./assets/js/lib/resource.mjs";
                     import {countDownloads, retrieve} from "./assets/js/lib/repository_utils.mjs";
 
                     const data = {users: {}, repositories: {}};
@@ -58,6 +70,7 @@
                         select.value = null;
                         const repositories = await user.getRepositories() || [];
                         for (const repository of repositories) {
+                            if (await Resource.exists(repository.id)) continue;
                             await repository.awaitReady();
                             select.appendChild(dom.create(`<option value="${repository.id}">${repository.name}</option>`));
                             data.repositories[repository.id] = repository;

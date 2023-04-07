@@ -1,4 +1,3 @@
-
 const system = require('fs');
 const path = require('path');
 
@@ -57,8 +56,7 @@ class CacheMap {
     }
 
     set(key, value) {
-        if (this.map.has(key)) this.map.set(key, value);
-        else {
+        if (this.map.has(key)) this.map.set(key, value); else {
             this._clean().then();
             this.map.set(key, value);
         }
@@ -78,7 +76,7 @@ class Query {
         this.location = location;
         this.target = () => {
             let text = location.join('/');
-            if (text.endsWith('.json')) text = text.substring(0, text.length-5);
+            if (text.endsWith('.json')) text = text.substring(0, text.length - 5);
             return text;
         }
         this.getValue = () => value;
@@ -117,7 +115,7 @@ class Database {
     }
 
     lock = {};
-    data = { get: (name) => this[name] || (this[name] = new CacheMap(16, 200)) };
+    data = {get: (name) => this[name] || (this[name] = new CacheMap(16, 200))};
     _list = async (path) => system.readdirSync(path, {withFileTypes: true}).filter(item => !item.isDirectory()).map(item => item.name.substring(0, item.name.lastIndexOf('.')))
     _getContent = async (path) => {
         try {
@@ -126,6 +124,15 @@ class Database {
             return (await promise).toString();
         } catch (error) {
             return '{}';
+        }
+    }
+    _exists = async (path) => {
+        try {
+            let lock = this.lock[path] || (this.lock[path] = Promise.resolve()), promise;
+            this.lock[path] = promise = lock.then(() => system.existsSync(path)).catch(() => false);
+            return (await promise).toString();
+        } catch (error) {
+            return 'false';
         }
     }
     _setContent = async (path, text) => {
@@ -165,7 +172,9 @@ class Database {
             const data = await this.getObject(...location);
             Object.assign(data, object);
             await data.save();
-        } catch (error) { console.log(error); }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async fetch(...url) {
@@ -174,17 +183,14 @@ class Database {
         const list = (url.endsWith('/')), check = (url.endsWith('?'));
         if (list || check) url = url.substring(0, url.length - 1);
         let location = url.split('/'), target = path.resolve(__dirname, this.path, ...location), value;
-        if (check) value = system.existsSync(target) || system.existsSync(target + '.json');
-        else if (system.existsSync(target) && system.lstatSync(target).isDirectory()) value = await this._list(target);
-        else if (!list && system.existsSync(target + '.json')) value = await this.getObject(...((location[location.length-1] = location[location.length-1] + '.json') && location));
-        else value = check ? false : null;
+        if (check) value = system.existsSync(target) || system.existsSync(target + '.json'); else if (system.existsSync(target) && system.lstatSync(target).isDirectory()) value = await this._list(target); else if (!list && system.existsSync(target + '.json')) value = await this.getObject(...((location[location.length - 1] = location[location.length - 1] + '.json') && location)); else value = check ? false : null;
         return new Query(this, value, ...location);
     }
 
     async delete(...url) {
         url = url.join('/');
         if (url.startsWith('/')) url = url.substring(1);
-        if (url.endsWith('/')) url = url.substring(0, url.length-1);
+        if (url.endsWith('/')) url = url.substring(0, url.length - 1);
         let location = url.split('/'), target = path.resolve(__dirname, this.path, ...location);
         if (system.existsSync(target + '.json')) system.rmSync(target + '.json');
     }
