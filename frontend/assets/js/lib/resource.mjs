@@ -31,7 +31,6 @@ class Resource {
         try {
             const data = await http.get('/api/resources/' + id).then(JSON.parse).then(data => data.value);
             if (!data || Object.keys(data).length === 0) return resource;
-            console.log(data); // todo
             Object.assign(resource, data);
             resource.isValid = () => true;
         } catch (error) {
