@@ -81,19 +81,28 @@
                         const yes = () => dom.create(`<i class="fa-solid fa-square-check text-emerald-500 w-4"></i>`),
                             no = () => dom.create(`<i class="fa-solid fa-square-xmark text-rose-500 w-4"></i>`);
                         const checklist = document.querySelector('[data-checklist]');
+
                         function mark(element, state = false) {
                             element.querySelector('i').replaceWith(state ? yes() : no());
                         }
+
                         for (let element of checklist.querySelectorAll('[data-check-item]')) {
                             mark(element, false);
                         }
                         if (!repository) return;
                         mark(checklist.querySelector('[data-check-public]'), true);
-                        console.log(repository.getLicence()); // todo
-                        try {
-                            mark(checklist.querySelector('[data-check-licence]'), true);
-                        } catch (error) {
-                        }
+                        repository.getLicence().then(licence => {
+                            if (licence.exists) mark(checklist.querySelector('[data-check-licence]'), true);
+                        });
+                        repository.getReadme().then(readme => {
+                            if (readme.exists) mark(checklist.querySelector('[data-check-readme]'), true);
+                        });
+                        repository.getFile('CITATION.cff').then(file => {
+                            if (file.exists) mark(checklist.querySelector('[data-check-citation]'), true);
+                        });
+                        repository.getReleases().then(array => {
+                            if (array && array.length > 0) mark(checklist.querySelector('[data-check-readme]'), true);
+                        });
                     }
 
                     async function chooseRepository(id) {
