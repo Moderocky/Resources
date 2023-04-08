@@ -78,7 +78,15 @@
                     }
 
                     async function updateChecklist(repository) {
-                        const yes =
+                        const yes = dom.create(`<i class="fa-solid fa-square-check text-emerald-500 w-4"></i>`),
+                            no = dom.create(`<i class="fa-solid fa-square-xmark text-rose-500 w-4"></i>`);
+                        const checklist = document.querySelector('[data-checklist]');
+                        function mark(element, state = false) {
+                            element.replaceChild(element.querySelector('i'), state ? yes : no);
+                        }
+                        for (let element of checklist.querySelectorAll('[data-check-item]')) {
+                            mark(element, false);
+                        }
                     }
 
                     async function chooseRepository(id) {
@@ -139,19 +147,19 @@
                 <div data-checklist
                      class="mt-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Checklist</h5>
-                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                    <div data-check-item data-check-public class="w-full p-2.5 space-x-2 rounded-lg">
                         <i class="fa-solid fa-square-check text-emerald-500 w-4"></i> Is Public
                     </div>
-                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                    <div data-check-item data-check-releases class="w-full p-2.5 space-x-2 rounded-lg">
                         <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has Releases
                     </div>
-                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                    <div data-check-item data-check-licence class="w-full p-2.5 space-x-2 rounded-lg">
                         <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a Licence
                     </div>
-                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                    <div data-check-item data-check-readme class="w-full p-2.5 space-x-2 rounded-lg">
                         <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a <code>README.md</code>
                     </div>
-                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                    <div data-check-item data-check-citation class="w-full p-2.5 space-x-2 rounded-lg">
                         <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a <code>CITATION.cff</code>
                     </div>
                 </div>
