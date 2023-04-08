@@ -9,6 +9,8 @@ async function gitRequest(url, body) {
 
 const requests = {};
 
+const debugMode = false;
+
 async function request(url, body) {
     try {
         if (url && url.includes('api.github')) {
@@ -17,9 +19,12 @@ async function request(url, body) {
             return result.data;
         } else if (url) return JSON.parse(await http.get(url, body)).data;
     } catch (error) {
-        console.error(`Error in request to "${url}".`);
-        console.log(body);
-        console.log(error);
+        if (debugMode) {
+            console.error(`Error in request to "${url}".`);
+            console.log(body);
+            console.log(error);
+        }
+        throw error;
     }
 }
 
@@ -101,6 +106,21 @@ class File extends Git {
 
     async isFromRepository() {
         return !!this.name;
+    }
+
+}
+
+class Licence extends File {
+
+    _links;
+    license;
+
+    constructor(request) {
+        super(request);
+    }
+
+    async awaitReady() {
+        return super.awaitReady();
     }
 
 }
@@ -539,6 +559,11 @@ class Repository extends Git {
 
     }
 
+    async getLicence() {
+        return GitHub.getLicenceFile(this.url + '/license');
+        // return await GitHub.getLicenceFile(this.url + '/license').awaitReady();
+    }
+
     async getFile(name) {
         await this.awaitReady();
         return await GitHub.getFile(GitHub.contents(this.url) + '/' + name).awaitReady();
@@ -681,6 +706,9 @@ class GitHub {
     static getRepositoryByName = (user, name) => {
         if (GitHub.repositorycache.hasOwnProperty(name + '')) return GitHub.repositorycache[name + ''];
         if (name) return new Repository(request(api + '/repos/' + user + '/' + name)); else return new Repository(request(api + '/repos/' + user));
+    }
+    static getLicenceFile = (url) => {
+        return new Licence(request(url));
     }
     static getFile = (url) => {
         return new File(request(url));
