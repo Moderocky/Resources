@@ -16,6 +16,7 @@ async function request(url, body) {
         if (url && url.includes('api.github')) {
             url = url.substring('https://api.github.com'.length);
             const result = await gitRequest(url, body);
+            if (result == null) return null;
             return result.data;
         } else if (url) return JSON.parse(await http.get(url, body)).data;
     } catch (error) {
@@ -32,6 +33,7 @@ class Git {
     _resolved = false;
     _promise = null;
     _request;
+    exists;
 
     constructor(request) {
         this._request = request;
@@ -48,6 +50,7 @@ class Git {
         const source = this;
         this._promise = new Promise(async (resolve) => {
             const data = await this._request;
+            this.exists = data != null;
             Object.assign(source, data);
             resolve(source);
         });
@@ -560,8 +563,13 @@ class Repository extends Git {
     }
 
     async getLicence() {
-        return GitHub.getLicenceFile(this.url + '/license');
-        // return await GitHub.getLicenceFile(this.url + '/license').awaitReady();
+        await this.awaitReady();
+        return await GitHub.getLicenceFile(this.url + '/license').awaitReady();
+    }
+
+    async getReadme() {
+        await this.awaitReady();
+        return await GitHub.getLicenceFile(this.url + '/readme').awaitReady();
     }
 
     async getFile(name) {
