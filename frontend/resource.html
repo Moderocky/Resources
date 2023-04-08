@@ -75,7 +75,7 @@
     <div class="px-4 2xl:container">
         <div class="w-full lg:my-2 flex flex-wrap">
             <div class="w-full md:w-4/12 2xl:w-3/12 p-2">
-                <div class="h-full py-4 px-6 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                <div class="h-full py-4 px-6 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mt-2 text-gray-700 dark:text-gray-100">Author</h5>
                     <div class="text-md text-white text-lg flex space-x-2 my-2 rounded-lg  dark:border-gray-500 bg-gradient-to-r from-sky-500 to-cyan-400">
                         <img alt="avatar" class="rounded-l-md  w-10 h-10" data-author-icon src="">
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="w-full md:w-8/12 2xl:w-9/12 p-2">
-                <div class="h-full p-4 space-y-4 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                <div class="h-full p-4 space-y-4 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mx-2 mt-2 text-gray-700 dark:text-gray-100">Contributors</h5>
                     <div class="flex flex-wrap" data-display-contributors>
 
@@ -156,7 +156,7 @@
                         let background = ((release['prerelease'] || release['draft'])) ? 'bg-gradient-to-r from-orange-500 to-amber-500' : 'bg-gradient-to-r from-sky-500 to-cyan-400';
                         let meta;
                         box.appendChild(meta = dom.create(`
-                            <div class="rounded-xl mb-4 px-4 py-6 rounded-xl bg-white bg-opacity-10 shadow-xl hover:bg-opacity-25">
+                            <div class="rounded-xl mb-4 px-4 py-6 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl hover:bg-opacity-25">
                                 <h2 class="text-3xl"><span class="rounded-lg text-2xl px-2.5 py-1.5 mr-2 text-white ` + background + `">` + release.tag_name + `</span> ` + release.name + `</h2>
                                 <div data-assets></div>
                             </div>`));
@@ -204,7 +204,7 @@
                     repository.awaitReady().then(repository => {
                         repository.getOwner().then(user => {
                             box.appendChild(dom.create(`
-                            <div class="rounded-xl m-2 px-4 py-6 rounded-xl bg-white bg-opacity-10 shadow-xl">
+                            <div class="rounded-xl m-2 px-4 py-6 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                                 <div class="flex flex-auto space-x-4">
                                     <img alt="User icon." class="w-20 h-20 rounded-full" src="` + (user.avatar_url) + `" />
                                     <div class="my-auto">
@@ -253,7 +253,7 @@
                                         i++;
                                         container.appendChild(dom.create(`
                                     <div class="w-full md:w-4/12 lg:w-6/12 2xl:w-4/12 p-2 cursor-pointer" onclick="window.location.search = '&id=` + repo.id + `'">
-                                        <div class="rounded-xl h-full px-4 py-6 bg-white bg-opacity-10 shadow-xl shadow-cla-violate bg-gradient-to-r {random}">
+                                        <div class="rounded-xl h-full px-4 py-6 bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl shadow-cla-violate bg-gradient-to-r {random}">
                                             <div class="">
                                                 <h2 class="text-xl">{name}</h2>
                                             </div>
@@ -302,7 +302,7 @@
             <div class="w-full xl:w-3/12 flex h-full flex-wrap">
                 <div class="w-full md:w-6/12 xl:w-full py-2 p-2">
                     <div data-action-bar
-                         class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                         class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                         <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Actions</h5>
                         <div data-link-to-issues
                              class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400 cursor-pointer">
@@ -340,7 +340,7 @@
                     </div>
                 </div>
                 <div class="w-full md:w-6/12 xl:w-full py-2 p-2">
-                    <div class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                    <div class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                         <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Statistics</h5>
                         <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-violet-400">
                             <i class="fa-regular fa-eye w-4"></i> <span data-retrieve="subscribers_count"></span>
