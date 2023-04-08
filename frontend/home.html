@@ -7,7 +7,8 @@
     <meta name="description" content="ByteSkript's public resource distribution centre, linked to the GitHub API."/>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/14147477?v=4"/>
     <meta name="keywords" content="byteskript, byte, skript, syzygy, resources, forums, marketplace, library"/>
-    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
+    <link crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          rel="stylesheet"/>
     <script src="assets/js/lib/tailwind.js"></script>
     <link href="assets/css/style.css" rel="stylesheet"/>
 </head>
@@ -16,14 +17,17 @@
     <section data-header>
         <script type="module">
             import {header} from "./assets/js/blocks/header.mjs";
+
             document.querySelector('section[data-header]').replaceWith(header);
         </script>
     </section>
     <section>
         <div class="flex flex-wrap justify-between items-center content-center">
             <div data-if-logged-in class="p-2 w-full md:w-4/12 h-max-content opacity-0">
-                <div onclick="window.location.href = '/publish'" class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
-                    <h5 class="text-xl font-semibold text-gray-700 dark:text-gray-200"><i class="fa-solid fa-file-circle-plus"></i> Post Resource</h5>
+                <div onclick="window.location.href = '/publish'"
+                     class="select-none cursor-pointer transition rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25 shadow-xl p-6 h-full">
+                    <h5 class="text-xl font-semibold text-gray-700 dark:text-gray-200"><i
+                            class="fa-solid fa-file-circle-plus"></i> Post Resource</h5>
                 </div>
             </div>
             <div class="p-2 w-none md:w-4/12">
@@ -32,7 +36,8 @@
                 <div class="p-3 w-full text-lg rounded-full border focus:border-sky-500 transition">
                     <label class="flex flex-auto space-x-2">
                         <i class="fa fa-search my-auto"></i>
-                        <input data-search-resources placeholder="Search" class="w-[90%] bg-inherit focus:outline-none" />
+                        <input data-search-resources placeholder="Search"
+                               class="w-[90%] bg-inherit focus:outline-none"/>
                     </label>
                 </div>
             </div>
@@ -55,7 +60,8 @@
                     <div class="space-y-2 flex flex-col h-full justify-between">
                         <div class="space-y-4">
                             <h4 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Popular</h4>
-                            <p class="text-gray-600 dark:text-gray-400">Search well-known resources by their star count.</p>
+                            <p class="text-gray-600 dark:text-gray-400">Search well-known resources by their star
+                                count.</p>
                         </div>
                     </div>
                 </div>
@@ -74,9 +80,14 @@
     </section>
     <section data-resources>
         <div class="w-full select-none m-2 mx-auto flex flex-auto justify-center items-center content-center">
-            <button data-page-prev class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-left-long my-auto"></i></button>
-            <div class="mx-4 p-3 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 min-w-[6rem] text-center">Page <span data-page-number>1</span></div>
-            <button data-page-next class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25"><i class="fa-solid fa-arrow-right-long my-auto"></i></button>
+            <button data-page-prev
+                    class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25">
+                <i class="fa-solid fa-arrow-left-long my-auto"></i></button>
+            <div class="mx-4 p-3 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 min-w-[6rem] text-center">
+                Page <span data-page-number>1</span></div>
+            <button data-page-next
+                    class="p-3 px-5 cursor-pointer rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-opacity-25">
+                <i class="fa-solid fa-arrow-right-long my-auto"></i></button>
         </div>
         <div data-content class="flex flex-wrap">
 
@@ -88,6 +99,7 @@
             import {similarity} from "./assets/js/lib/similar.mjs";
             import {getLanguage, getLanguages} from "./assets/js/lib/languages.mjs";
             import {GitHub} from "./assets/js/lib/github.mjs";
+
             const resources = {
                 current_page: 0,
                 per_page: 6,
@@ -99,11 +111,16 @@
                 list: [],
                 languages: [],
                 finished: false,
-                get: () => {},
-                display: (repositories) => {},
-                sortBy: (key) => {},
-                search: (keyword) => {},
-                getBy: (language) => {}
+                get: () => {
+                },
+                display: (repositories) => {
+                },
+                sortBy: (key) => {
+                },
+                search: (keyword) => {
+                },
+                getBy: (language) => {
+                }
             }
             const buttons = {
                 prev: resources.area.querySelector('div button[data-page-prev]'),
@@ -159,7 +176,8 @@
                     case 'popular':
                         (await resources.get(true)).sort((a, b) => b.stargazers_count - a.stargazers_count);
                         break;
-                    default: (await resources.get(true)).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
+                    default:
+                        (await resources.get(true)).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at));
                 }
                 resources.display();
                 await wait(300);
@@ -187,9 +205,13 @@
             resources.display = async function (repositories) {
                 resources.section.innerHTML = null;
                 if (repositories == null) repositories = await resources.get();
-                repositories = repositories.slice(resources.per_page*resources.current_page, (resources.per_page*(resources.current_page+1)));
+                repositories = repositories.slice(resources.per_page * resources.current_page, (resources.per_page * (resources.current_page + 1)));
                 for (let repository of repositories) {
-                    const box = card({...repository, owner_avatar_url: repository.owner.avatar_url, owner_login: repository.owner.login});
+                    const box = card({
+                        ...repository,
+                        owner_avatar_url: repository.owner.avatar_url,
+                        owner_login: repository.owner.login
+                    });
                     resources.section.appendChild(box);
                 }
                 for (let node of resources.section.childNodes) {
@@ -213,12 +235,15 @@
                         array.push(repository)
                     }
                     array.sort((a, b) => (b.languages[language] || 0) - (a.languages[language] || 0));
-                } catch (error) {console.log(error)}
+                } catch (error) {
+                    console.log(error)
+                }
                 resources.list = array;
                 resources.display();
                 await wait(300);
                 resources.enabled = true;
             }
+
             async function displayLanguageCards() {
                 resources.section.innerHTML = null;
                 const array = [];
@@ -235,6 +260,7 @@
                     node.classList.remove('opacity-0');
                 }
             }
+
             resources.display();
         </script>
     </section>

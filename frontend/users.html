@@ -77,10 +77,12 @@
                     users[id] = getUser(id);
                 }
             });
+
             function getUser(id) {
                 if (users[id]) return users[id];
                 return users[id] = new Account(id);
             }
+
             async function display() {
                 section.classList.add('hidden');
                 container.innerHTML = '';
@@ -97,6 +99,7 @@
                 }
                 section.classList.remove('hidden');
             }
+
             display();
         </script>
     </section>
