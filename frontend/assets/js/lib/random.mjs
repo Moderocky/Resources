@@ -1,8 +1,8 @@
-
 export class Random {
     seed;
+
     constructor(seed) {
-        this.seed = seed || Math.floor(Math.random()*100);
+        this.seed = seed || Math.floor(Math.random() * 100);
     }
 
     next() {

@@ -9,18 +9,6 @@ class Resource {
     _repository;
     _owner;
 
-    getRepository() {
-        return this._repository || (this._repository = GitHub.getRepository(this.id));
-    }
-
-    getOwnerUser() {
-        return this._owner || (this._owner = GitHub.getUser(this.owner));
-    }
-
-    isValid() {
-        return false;
-    }
-
     static async exists(id) {
         return (await this.getByID(id)).isValid();
     }
@@ -46,6 +34,18 @@ class Resource {
             if (resource.owner === id) found.push(resource);
         }
         return found;
+    }
+
+    getRepository() {
+        return this._repository || (this._repository = GitHub.getRepository(this.id));
+    }
+
+    getOwnerUser() {
+        return this._owner || (this._owner = GitHub.getUser(this.owner));
+    }
+
+    isValid() {
+        return false;
     }
 
 }

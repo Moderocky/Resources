@@ -1,4 +1,3 @@
-
 export const date = {
     tomorrow: function () {
         return this.plus(24);

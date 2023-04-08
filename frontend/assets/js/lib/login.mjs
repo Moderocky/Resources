@@ -21,6 +21,17 @@ class Account {
         if (user) this.valid = !!(this.user = user); else this.getUser().then();
     }
 
+    static getUsers = async () => {
+        const users = [];
+        const data = await http.get(api + '/users/').then(JSON.parse);
+        for (let datum of data.value) users.push(new Account(datum, await GitHub.getUser(datum).awaitReady()));
+        return users;
+    }
+
+    static getUserIDs = async () => {
+        return await http.get(api + '/users/').then(JSON.parse);
+    }
+
     isAdmin() {
         return this.roles.includes('admin');
     }
@@ -74,17 +85,6 @@ class Account {
         delete this._promise;
         this.resolved = true;
         return this;
-    }
-
-    static getUsers = async () => {
-        const users = [];
-        const data = await http.get(api + '/users/').then(JSON.parse);
-        for (let datum of data.value) users.push(new Account(datum, await GitHub.getUser(datum).awaitReady()));
-        return users;
-    }
-
-    static getUserIDs = async () => {
-        return await http.get(api + '/users/').then(JSON.parse);
     }
 
 }
