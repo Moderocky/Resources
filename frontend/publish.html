@@ -25,7 +25,7 @@
     <section>
         <div data-content class="m-2 flex flex-wrap">
             <div class="w-full lg:w-9/12 xl:w-8/12 p-2">
-                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <label for="choose-account">Account</label>
                     <select data-choose-account id="choose-account"
                             class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -33,12 +33,25 @@
                     </select>
 
                 </div>
-                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                <div class="mb-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <label for="choose-repository">Repository</label>
                     <select data-choose-repository id="choose-repository"
                             class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Choose a Repository</option>
                     </select>
+                </div>
+                <div class="w-full flex flex-wrap">
+                    <div class="w-full md:w-4/12 xl:w:3/12 md:pr-2">
+                        <div class="select-none cursor-pointer py-6 px-6 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
+                            <p>button :)</p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-8/12 xl:w:9/12 md:pl-2">
+                        <div class="py-6 px-6 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
+                            <p class="text-sm">Publishing this resource will make it available on Syzygy.</p>
+                            <p class="mt-4 text-sm">Data in your repository is not modified in any way.</p>
+                        </div>
+                    </div>
                 </div>
                 <script type="module">
                     import {dom} from "./assets/js/lib/dom.mjs";
@@ -64,6 +77,10 @@
                         select.onchange = () => chooseRepository(select.value);
                     }
 
+                    async function updateChecklist(repository) {
+                        const yes =
+                    }
+
                     async function chooseRepository(id) {
                         const repository = data.repositories[id] || null;
                         if (!repository) return;
@@ -76,6 +93,7 @@
                                     else element.appendChild(document.createTextNode(value() || '0'));
                                 } else element.appendChild(document.createTextNode(value || '0'));
                             }
+                            updateChecklist(repository).then();
                             await countDownloads(repository);
                         });
                     }
@@ -99,7 +117,7 @@
             </div>
             <div class="w-full lg:w-3/12 xl:w-4/12 py-2 p-2">
                 <div data-statistics
-                     class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-white bg-opacity-10 shadow-xl">
+                     class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                     <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Statistics</h5>
                     <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-violet-400">
                         <i class="fa-regular fa-eye w-4"></i> <span data-retrieve="subscribers_count">0</span>
@@ -116,6 +134,25 @@
                     </div>
                     <div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-500 to-red-400">
                         <i class="fa-solid fa-bug w-4"></i> <span data-retrieve="open_issues_count">0</span> Issues
+                    </div>
+                </div>
+                <div data-checklist
+                     class="mt-4 py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
+                    <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Checklist</h5>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                        <i class="fa-solid fa-square-check text-emerald-500 w-4"></i> Is Public
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                        <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has Releases
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                        <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a Licence
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                        <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a <code>README.md</code>
+                    </div>
+                    <div class="w-full p-2.5 space-x-2 rounded-lg">
+                        <i class="fa-solid fa-square-xmark text-rose-500 w-4"></i> Has a <code>CITATION.cff</code>
                     </div>
                 </div>
             </div>
