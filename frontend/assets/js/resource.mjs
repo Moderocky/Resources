@@ -95,7 +95,7 @@ for (const element of document.querySelectorAll('[data-version-history]')) {
 function generateMarkdown(text, container) {
     const htm = marked.parse(text);
     const elements = dom.createMulti(htm);
-    let current = dom.createElement('div', 'section', 'py-6', 'px-6', 'mb-4', 'rounded-xl', 'bg-white', 'bg-opacity-10', 'shadow-xl');
+    let current = dom.createElement('div', 'section', 'py-6', 'px-6', 'mb-4', 'rounded-xl', 'bg-slate-900', 'dark:bg-white', 'dark:bg-opacity-10', 'bg-opacity-10', 'shadow-xl');
     let has = false;
     for (let element of elements) {
         if (element.tagName != null && element.tagName.startsWith('H') && has === true) {
