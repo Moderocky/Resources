@@ -1,4 +1,5 @@
 import {http} from './request.mjs';
+import {login} from "../blocks/login.mjs";
 
 const api = '/api/git';
 
@@ -253,6 +254,10 @@ class User extends Git {
 
     getRepository(name) {
         return GitHub.getRepositoryByName(this.login, name);
+    }
+
+    getOwnRepository() {
+        return GitHub.getRepositoryByName(this.login, this.login);
     }
 
     getGist(id) {
