@@ -38,6 +38,7 @@
         document.currentScript.parentElement.removeChild(document.currentScript);
     </script>
     <script src="assets/js/lib/tailwind.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="assets/css/style.css" rel="stylesheet"/>
 </head>
 <body class="dark:bg-gray-800 dark:text-gray-300 opacity-0 transition-opacity">
@@ -118,85 +119,111 @@
                             import {wait} from "./assets/js/lib/wait.mjs";
 
                             const id = http.current()['id'];
-                            if (id == null) document.querySelector('section[data-user-profile]').remove();
-                            document.querySelector('section[data-user-list]').remove();
-                            for (let element of document.querySelectorAll('section[data-user-search]')) element.remove();
-                            const user = await GitHub.getUser(id).awaitReady();
-                            const account = new Account(id, user);
-                            await account.awaitReady();
-                            if (!account.valid) {
-                                window.location.href = '/users';
-                                stop();
-                                throw new Error('Invalid user page.');
-                            }
-                            const section = document.querySelector('section[data-user-profile]');
-                            section.classList.remove('hidden');
-                            const icon = (account.isAdmin() ? `<i class="fa-solid fa-crown"></i>`
-                                : account.roles.includes('staff') ? `<i class="fa-solid fa-gavel"></i>`
-                                    : user.type === 'Organization' ? `<i class="fa-solid fa-users"></i>` : ``);
-                            section.querySelector('div[data-profile]').replaceWith(dom.create(`
-                                <div class="w-full p-2 transition-opacity">
-                                    <div class="p-1 h-full group sm:flex space-x-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
-                                        <img src="${user.avatar_url}" alt="User icon" loading="lazy" width="300" height="300" class="h-16 w-56 sm:h-full w-full sm:w-4/12 object-cover object-top rounded-lg transition duration-500 group-hover:scale-90"/>
-                                        <div class="w-8/12 p-5 h-full">
-                                            <div class="space-y-2 flex flex-col h-full">
-                                                <h4 class="text-2xl font-semibold text-gray-100">${user.display_name} ${icon}</h4>
-                                                <p class="text-gray-200">${user.bio || 'No description.'}</p>
-                                                <div data-profile-badges class="py-6 px-4 m-0 space-y-2 w-full"></div>
+                            if (id == null) {
+                                document.querySelector('section[data-user-profile]').remove();
+                            } else {
+                                document.querySelector('section[data-user-list]').remove();
+                                for (let element of document.querySelectorAll('section[data-user-search]')) element.remove();
+                                const user = await GitHub.getUser(id).awaitReady();
+                                const account = new Account(id, user);
+                                await account.awaitReady();
+                                if (!account.valid) {
+                                    window.location.href = '/users';
+                                    stop();
+                                    throw new Error('Invalid user page.');
+                                }
+                                document.querySelector('title').innerText = `Syzygy | ${user.display_name}`;
+                                const section = document.querySelector('section[data-user-profile]');
+                                section.classList.remove('hidden');
+                                const icon = (account.isAdmin() ? `<i class="fa-solid fa-crown"></i>`
+                                    : account.roles.includes('staff') ? `<i class="fa-solid fa-gavel"></i>`
+                                        : user.type === 'Organization' ? `<i class="fa-solid fa-users"></i>` : ``);
+                                section.querySelector('div[data-profile]').replaceWith(dom.create(`
+                                    <div class="w-full p-2 transition-opacity">
+                                        <div class="p-1 h-full group sm:flex space-x-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
+                                            <img src="${user.avatar_url}" alt="User icon" loading="lazy" width="300" height="300" class="h-16 w-56 sm:h-full w-full sm:w-4/12 object-cover object-top rounded-lg transition duration-500 group-hover:scale-90"/>
+                                            <div class="w-8/12 p-5 h-full">
+                                                <div class="space-y-2 flex flex-col h-full">
+                                                    <h4 class="text-2xl font-semibold text-gray-100">${user.display_name} ${icon}</h4>
+                                                    <p class="text-gray-200">${user.bio || 'No description.'}</p>
+                                                    <div data-profile-badges class="py-6 px-4 m-0 space-y-2 w-full"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            `));
+                                `));
 
-                            const badges = section.querySelector('[data-profile-badges]');
-                            if (account.roles.includes('admin'))
-                                badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-600 to-red-500">
+                                const badges = section.querySelector('[data-profile-badges]');
+                                if (account.roles.includes('admin'))
+                                    badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-rose-600 to-red-500">
                                     <i class="fa-solid fa-crown w-4"></i> Admin
                                 </div>`));
-                            if (account.roles.includes('staff'))
-                                badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-violet-500 to-fuchsia-400">
+                                if (account.roles.includes('staff'))
+                                    badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-violet-500 to-fuchsia-400">
                                     <i class="fa-solid fa-gavel w-4"></i> Staff
                                 </div>`));
-                            GitHub.getRepository(483594530).isContributor(user).then(value => {
-                                if (value)
-                                    badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-amber-500 to-yellow-400">
+                                GitHub.getRepository(483594530).isContributor(user).then(value => {
+                                    if (value)
+                                        badges.appendChild(dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg text-white bg-gradient-to-r from-amber-500 to-yellow-400">
                                     <i class="fa-solid fa-gavel w-4"></i> Contributor
                                 </div>`));
-                            });
-                            const lastWeek = date.plus((-24 * 7)), lastMonth = date.plus((-24 * 30));
-                            user.getEventsAfter(lastMonth).then(async events => {
-                                const data = {
-                                    pushes: events.filter(event => event.type === 'PushEvent').length,
-                                    prs: events.filter(event => event.type === 'PullRequestEvent').length,
-                                    forks: events.filter(event => event.type === 'ForkEvent').length,
-                                    issues: events.filter(event => event.type === 'IssuesEvent').length,
-                                    reviews: events.filter(event => event.type === 'PullRequestReviewEvent').length
-                                };
-                                const stats = statistics(data);
-                                section.querySelector('div[data-user-statistics]').replaceWith(stats);
-                                await wait(50);
-                                stats.classList.remove('opacity-0');
-                            });
-                            const details = dom.create(`<div class="w-full p-2 transition-opacity">
-                                <div data-user-info class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
-                                    <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Information</h5>
-                                </div>
-                            </div>`);
-                            const info = details.querySelector('[data-user-info]');
+                                });
+                                const lastWeek = date.plus((-24 * 7)), lastMonth = date.plus((-24 * 30));
+                                user.getEventsAfter(lastMonth).then(async events => {
+                                    const data = {
+                                        pushes: events.filter(event => event.type === 'PushEvent').length,
+                                        prs: events.filter(event => event.type === 'PullRequestEvent').length,
+                                        forks: events.filter(event => event.type === 'ForkEvent').length,
+                                        issues: events.filter(event => event.type === 'IssuesEvent').length,
+                                        reviews: events.filter(event => event.type === 'PullRequestReviewEvent').length
+                                    };
+                                    const stats = statistics(data);
+                                    section.querySelector('div[data-user-statistics]').replaceWith(stats);
+                                    await wait(50);
+                                    stats.classList.remove('opacity-0');
+                                });
+                                const details = dom.create(`<div class="w-full p-2 transition-opacity">
+                                    <div data-user-info class="py-6 px-4 m-0 space-y-2 rounded-xl rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
+                                        <h5 class="text-xl mb-6 text-gray-600 dark:text-gray-100 text-center">Information</h5>
+                                    </div>
+                                </div>`);
+                                const info = details.querySelector('[data-user-info]');
 
-                            function infoBox(i, text) {
-                                return dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg"><i class="${i} w-5"></i> ${text}</div>`);
+                                function infoBox(i, text) {
+                                    return dom.create(`<div class="w-full p-2.5 space-x-2 rounded-lg"><i class="${i} w-5"></i> ${text}</div>`);
+                                }
+
+                                if (user.company) info.appendChild(infoBox('fa-solid fa-briefcase', user.company));
+                                if (user.twitter_username) info.appendChild(infoBox('fa-brands fa-twitter', user.twitter_username));
+                                if (user.location) info.appendChild(infoBox('fa-solid fa-map-location-dot', user.location));
+                                if (user.blog) info.appendChild(infoBox('fa-solid fa-desktop', user.blog));
+                                section.querySelector('[data-user-details]').replaceWith(details);
+                                // const img = section.querySelector('div[data-user-statistics] img[data-activity-graph]');
+                                // img.src = 'https://resources.byteskript.org/activity_graph/' + user.login + '.svg';
+                                // img.classList.remove('opacity-0');
                             }
+                        </script>
+                    </div>
+                    <div data-readme>
+                        <script type="module">
+                            import {http} from "./assets/js/lib/request.mjs";
+                            import {dom} from "./assets/js/lib/dom.mjs";
+                            import {GitHub} from "./assets/js/lib/github.mjs";
+                            import {fixMarkdown, generateMarkdown} from "./assets/js/lib/readme.mjs";
 
-                            if (user.company) info.appendChild(infoBox('fa-solid fa-briefcase', user.company));
-                            if (user.twitter_username) info.appendChild(infoBox('fa-brands fa-twitter', user.twitter_username));
-                            if (user.location) info.appendChild(infoBox('fa-solid fa-map-location-dot', user.location));
-                            if (user.blog) info.appendChild(infoBox('fa-solid fa-desktop', user.blog));
-                            section.querySelector('[data-user-details]').replaceWith(details);
-                            // const img = section.querySelector('div[data-user-statistics] img[data-activity-graph]');
-                            // img.src = 'https://resources.byteskript.org/activity_graph/' + user.login + '.svg';
-                            // img.classList.remove('opacity-0');
+                            const id = http.current()['id'];
+                            if (id == null) throw new Error('No user loaded.');
+                            const user = await GitHub.getUser(id).awaitReady();
+                            const section = document.querySelector('section[data-user-profile]');
+                            let element = section.querySelector('div[data-readme]');
+                            const repository = user.getOwnRepository();
+                            element.replaceWith(element = dom.create(`<div class="w-full p-2 transition-opacity"></div>`));
+                            repository.awaitReady().then(repository => {
+                                repository.getFileContent('README.md').then(text => {
+                                    generateMarkdown(text, element);
+                                    fixMarkdown(element);
+                                }).catch();
+                            }).catch();
                         </script>
                     </div>
                 </div>
@@ -204,21 +231,6 @@
                     <div data-user-details></div>
                     <div data-user-statistics></div>
                 </div>
-                <div class="w-full">
-                    <div data-user-statistics class="w-full h-full p-2 transition-opacity">
-                        <div class="p-6 h-full w-full group sm:flex space-x-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
-                            <img data-activity-graph class="opacity-0 transition-opacity w-full" src=""
-                                 alt="Commit streak.">
-                        </div>
-                    </div>
-                </div>
-                <!--                <div class="w-full">-->
-                <!--                    <div data-user-statistics class="w-full h-full p-2 transition-opacity">-->
-                <!--                        <div class="p-6 h-full w-full rounded-xl group sm:flex space-x-2 bg-slate-900 shadow-xl">-->
-                <!--                            <canvas data-user-graph></canvas>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
             </div>
         </div>
     </section>
