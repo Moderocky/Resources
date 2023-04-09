@@ -212,7 +212,7 @@
                             import {fixMarkdown, generateMarkdown} from "./assets/js/lib/readme.mjs";
 
                             const id = http.current()['id'];
-                            if (id == null) throw new Error('No user loaded.');
+                            if (id == null) throw new Error('No user readme loaded.');
                             const user = await GitHub.getUser(id).awaitReady();
                             const section = document.querySelector('section[data-user-profile]');
                             let element = section.querySelector('div[data-readme]');
@@ -230,6 +230,39 @@
                 <div class="w-full md:w-4/12">
                     <div data-user-details></div>
                     <div data-user-statistics></div>
+                </div>
+                <div class="w-full">
+                    <div data-resources>
+                        <script type="module">
+                            import {http} from "./assets/js/lib/request.mjs";
+                            import {dom} from "./assets/js/lib/dom.mjs";
+                            import {GitHub} from "./assets/js/lib/github.mjs";
+                            import {Resource} from "./assets/js/lib/resource.mjs";
+                            import {card} from "./assets/js/blocks/repo_card.mjs";
+                            import {wait} from "./assets/js/lib/wait.mjs";
+
+                            const id = http.current()['id'];
+                            if (id == null) throw new Error('No user resources loaded.');
+                            const user = await GitHub.getUser(id).awaitReady();
+                            const section = document.querySelector('section[data-user-profile]');
+                            let element = section.querySelector('div[data-resources]');
+                            element.replaceWith(element = dom.create(`<div class="w-full p-2 transition-opacity"></div>`));
+                            Resource.getByUser(id).then(array => {
+                                for (let resource of array) {
+                                    resource.getRepository().then(async repository => {
+                                        const box = card({
+                                            ...repository,
+                                            owner_avatar_url: repository.owner.avatar_url,
+                                            owner_login: repository.owner.login
+                                        });
+                                        element.appendChild(box);
+                                        await wait(50);
+                                        box.classList.remove('opacity-0');
+                                    }).catch();
+                                }
+                            }).catch();
+                        </script>
+                    </div>
                 </div>
             </div>
         </div>
