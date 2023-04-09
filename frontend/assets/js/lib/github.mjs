@@ -1,5 +1,4 @@
 import {http} from './request.mjs';
-import {login} from "../blocks/login.mjs";
 
 const api = '/api/git';
 
