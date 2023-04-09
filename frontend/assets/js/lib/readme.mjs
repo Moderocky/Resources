@@ -1,7 +1,4 @@
 import {dom} from "./dom.mjs";
-import {GitHub} from "./lib/github.mjs";
-
-
 
 function fixMarkdown(element) {
     for (let pre of element.querySelectorAll('pre')) pre.classList.add('rounded-xl', 'bg-gray-200', 'dark:bg-gray-600');
