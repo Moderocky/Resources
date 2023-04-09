@@ -33,12 +33,12 @@ class Resource extends Git {
     }
 
     static async getByUser(user) {
-        const ids = await http.get('/api/resources/').then(JSON.parse) || [];
+        const ids = await http.get('/api/resources/').then(data => (JSON.parse(data) || {value: []}).value) || [];
         const found = [];
         for (let id of ids) {
             const resource = new Resource(this._fetchData(id));
             await resource.awaitReady();
-            if (resource.owner === user) found.push(resource);
+            if (resource.owner == user) found.push(resource);
         }
         return found;
     }
