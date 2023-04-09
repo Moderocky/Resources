@@ -184,41 +184,30 @@
                 resources.enabled = true;
             };
 
-            function assemble() {
+            async function assemble() {
                 const list = resources.list = [];
-                for (let datum of resources.data) list.push(datum.getRepository());
+                for (let datum of resources.data) list.push(await datum.getRepository());
             }
 
             resources.get = async (clear = false) => {
                 if (resources.finished) {
-                    if (clear) assemble();
+                    if (clear) await assemble();
                     resources.max_page = Math.floor(resources.list.length / resources.per_page);
                     return resources.list;
                 }
                 resources.enabled = false;
                 await Resource.getAll().then(array => {
-                    console.log(array); // todo
                     for (let resource of array) {
                         resources.data.push(resource);
-                        resource.getRepository().awaitReady().then(repository => repository.getLanguages()).then(languages => {
+                        resource.getRepository().then(repository => repository.getLanguages()).then(languages => {
                             for (let language in languages) if (!resources.languages.includes(language)) resources.languages.push(language);
                         });
-                        resources.max_page = Math.floor(resources.data.length / resources.per_page);
-                        resource.awaitReady().then(resource => resource.getRepository().awaitReady()).then(async repository => {
-                            const box = card({
-                                ...repository,
-                                owner_avatar_url: repository.owner.avatar_url,
-                                owner_login: repository.owner.login
-                            });
-                            const node = resources.section.appendChild(box);
-                            await wait(50);
-                            node.classList.remove('opacity-0');
-                        })
                     }
+                    resources.max_page = Math.floor(array.length / resources.per_page);
                     resources.finished = true;
                     resources.enabled = true;
                 });
-                assemble();
+                await assemble();
                 return resources.list;
             };
             resources.display = async function (repositories) {
@@ -226,6 +215,7 @@
                 if (repositories == null) repositories = await resources.get();
                 repositories = repositories.slice(resources.per_page * resources.current_page, (resources.per_page * (resources.current_page + 1)));
                 for (let repository of repositories) {
+                    await repository.awaitReady();
                     const box = card({
                         ...repository,
                         owner_avatar_url: repository.owner.avatar_url,

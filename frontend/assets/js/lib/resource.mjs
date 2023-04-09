@@ -4,6 +4,7 @@ import {http} from "./request.mjs";
 class Resource extends Git {
     id;
     owner;
+    name;
     tag_line = '';
     icon;
     _repository;
@@ -43,7 +44,7 @@ class Resource extends Git {
     }
 
     static async getAll() {
-        const ids = await http.get('/api/resources/').then(data => (JSON.parse(data) || {value:[]}).value) || [];
+        const ids = await http.get('/api/resources/').then(data => (JSON.parse(data) || {value: []}).value) || [];
         const found = [];
         for (let id of ids) {
             const resource = new Resource(this._fetchData(id));
@@ -52,8 +53,11 @@ class Resource extends Git {
         return found;
     }
 
-    getRepository() {
-        return this._repository || (this._repository = GitHub.getRepository(this.id));
+    async getRepository() {
+        await this.awaitReady();
+        if (this._repository) return this._repository;
+        this._repository = await GitHub.getRepository(this.id).awaitReady();
+        return this._repository;
     }
 
     getOwnerUser() {
