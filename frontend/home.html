@@ -186,7 +186,11 @@
 
             async function assemble() {
                 const list = resources.list = [];
-                for (let datum of resources.data) list.push(await datum.getRepository());
+                for (let datum of resources.data) {
+                    const object = {};
+                    Object.assign(object, datum, await datum.getRepository());
+                    list.push(object);
+                }
             }
 
             resources.get = async (clear = false) => {
@@ -215,11 +219,8 @@
                 if (repositories == null) repositories = await resources.get();
                 repositories = repositories.slice(resources.per_page * resources.current_page, (resources.per_page * (resources.current_page + 1)));
                 for (let repository of repositories) {
-                    await repository.awaitReady();
                     const box = card({
-                        ...repository,
-                        owner_avatar_url: repository.owner.avatar_url,
-                        owner_login: repository.owner.login
+                        ...repository
                     });
                     resources.section.appendChild(box);
                 }

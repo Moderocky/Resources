@@ -251,9 +251,8 @@
                                 for (let resource of array) {
                                     resource.getRepository().then(async repository => {
                                         const box = card({
-                                            ...repository,
-                                            owner_avatar_url: repository.owner.avatar_url,
-                                            owner_login: repository.owner.login
+                                            ...resource,
+                                            ...repository
                                         });
                                         element.appendChild(box);
                                         await wait(50);
