@@ -1,7 +1,7 @@
-import {GitHub} from "./github.mjs";
+import {Git, GitHub} from "./github.mjs";
 import {http} from "./request.mjs";
 
-class Resource {
+class Resource extends Git {
     id;
     owner;
     tag_line = '';
@@ -9,29 +9,45 @@ class Resource {
     _repository;
     _owner;
 
-    static async exists(id) {
-        return (await this.getByID(id)).isValid();
+    constructor(request) {
+        super(request);
     }
 
-    static async getByID(id) {
-        const resource = new Resource();
+    async awaitReady() {
+        return super.awaitReady();
+    }
+
+    static async exists(id) {
+        return (await this.getByID(id)).exists;
+    }
+
+    static async _fetchData(id) {
+        return await http.get('/api/resources/' + id).then(JSON.parse).then(data => data.value);
+    }
+
+    static getByID(id) {
+        const resource = new Resource(this._fetchData(id));
         resource.id = id;
-        try {
-            const data = await http.get('/api/resources/' + id).then(JSON.parse).then(data => data.value);
-            if (!data || Object.keys(data).length === 0) return resource;
-            Object.assign(resource, data);
-            resource.isValid = () => true;
-        } catch (error) {
-            console.error(error);
-        }
         return resource;
     }
 
-    static async getByUser(id) {
-        const resources = await http.get('/api/resources/' + id).then(JSON.parse) || [];
+    static async getByUser(user) {
+        const ids = await http.get('/api/resources/').then(JSON.parse) || [];
         const found = [];
-        for (let resource of resources) {
-            if (resource.owner === id) found.push(resource);
+        for (let id of ids) {
+            const resource = new Resource(this._fetchData(id));
+            await resource.awaitReady();
+            if (resource.owner === user) found.push(resource);
+        }
+        return found;
+    }
+
+    static async getAll() {
+        const ids = await http.get('/api/resources/').then(data => (JSON.parse(data) || {value:[]}).value) || [];
+        const found = [];
+        for (let id of ids) {
+            const resource = new Resource(this._fetchData(id));
+            found.push(resource);
         }
         return found;
     }
@@ -45,7 +61,7 @@ class Resource {
     }
 
     isValid() {
-        return false;
+        return this.exists;
     }
 
 }

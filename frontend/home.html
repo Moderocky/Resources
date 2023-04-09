@@ -98,7 +98,7 @@
             import {wait} from "./assets/js/lib/wait.mjs";
             import {similarity} from "./assets/js/lib/similar.mjs";
             import {getLanguage, getLanguages} from "./assets/js/lib/languages.mjs";
-            import {GitHub} from "./assets/js/lib/github.mjs";
+            import {Resource} from "./assets/js/lib/resource.mjs";
 
             const resources = {
                 current_page: 0,
@@ -183,24 +183,43 @@
                 await wait(300);
                 resources.enabled = true;
             };
+
+            function assemble() {
+                const list = resources.list = [];
+                for (let datum of resources.data) list.push(datum.getRepository());
+            }
+
             resources.get = async (clear = false) => {
                 if (resources.finished) {
-                    if (clear) resources.list = [...resources.data];
+                    if (clear) assemble();
                     resources.max_page = Math.floor(resources.list.length / resources.per_page);
                     return resources.list;
                 }
                 resources.enabled = false;
-                resources.data.push(...await GitHub.getUser(72931234).getRepositories());
-                resources.data.push(...await GitHub.getUser(14147477).getRepositories());
-                resources.data.push(...await GitHub.getUser(29044720).getRepositories());
-                resources.data = resources.data.filter(repo => repo && !repo.fork);
-                resources.max_page = Math.floor(resources.data.length / resources.per_page);
-                for (let datum of resources.data) datum.getLanguages().then(languages => {
-                    for (let language in languages) if (!resources.languages.includes(language)) resources.languages.push(language);
+                await Resource.getAll().then(array => {
+                    console.log(array); // todo
+                    for (let resource of array) {
+                        resources.data.push(resource);
+                        resource.getRepository().awaitReady().then(repository => repository.getLanguages()).then(languages => {
+                            for (let language in languages) if (!resources.languages.includes(language)) resources.languages.push(language);
+                        });
+                        resources.max_page = Math.floor(resources.data.length / resources.per_page);
+                        resource.awaitReady().then(resource => resource.getRepository().awaitReady()).then(async repository => {
+                            const box = card({
+                                ...repository,
+                                owner_avatar_url: repository.owner.avatar_url,
+                                owner_login: repository.owner.login
+                            });
+                            const node = resources.section.appendChild(box);
+                            await wait(50);
+                            node.classList.remove('opacity-0');
+                        })
+                    }
+                    resources.finished = true;
+                    resources.enabled = true;
                 });
-                resources.finished = true;
-                resources.enabled = true;
-                return resources.list = [...resources.data];
+                assemble();
+                return resources.list;
             };
             resources.display = async function (repositories) {
                 resources.section.innerHTML = null;
