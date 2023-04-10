@@ -19,12 +19,15 @@ function fixMarkdown(element) {
 function generateMarkdown(text, container) {
     const htm = marked.parse(text);
     const elements = dom.createMulti(htm);
-    let current = dom.createElement('div', 'section', 'py-6', 'px-6', 'mb-4', 'rounded-xl', 'bg-slate-900', 'dark:bg-white', 'dark:bg-opacity-10', 'bg-opacity-10', 'shadow-xl');
+    let current = dom.createElement('div', 'section', 'py-6', 'px-6', 'rounded-xl', 'bg-slate-900', 'dark:bg-white', 'dark:bg-opacity-10', 'bg-opacity-10', 'shadow-xl');
     let has = false;
     for (let element of elements) {
         if (element.tagName != null && element.tagName.startsWith('H') && has === true) {
-            if (current != null && current.childNodes.length > 0) container.appendChild(current);
-            current = dom.createElement('div', 'section', 'py-6', 'px-6', 'mb-4', 'rounded-xl', 'bg-slate-900', 'dark:bg-white', 'dark:bg-opacity-10', 'bg-opacity-10', 'shadow-xl');
+            if (current != null && current.childNodes.length > 0) {
+                current.classList.add('mb-4');
+                container.appendChild(current);
+            }
+            current = dom.createElement('div', 'section', 'py-6', 'px-6', 'rounded-xl', 'bg-slate-900', 'dark:bg-white', 'dark:bg-opacity-10', 'bg-opacity-10', 'shadow-xl');
             has = false;
         } else if (element.tagName != null && (element.tagName === 'P' || element.tagName === 'UL' || element.tagName === 'OL' || element.tagName === 'PRE' || element.tagName === 'CODE')) has = true;
         if (element.tagName === 'H1') element.classList.add('border-b-2', 'border-gray-200', 'dark:border-gray-600');
