@@ -135,8 +135,12 @@
                         const user = document.querySelector('[data-choose-account]').value;
                         const repository = document.querySelector('[data-choose-repository]').value;
                         if (!repository || !user || !account.id) return;
-                        http.post('/api/resources/', {user: account.id, account: user, repository: repository})
-                            .then(() => window.location = '/resource?id=' + repository);
+                        http.post('/api/resources/', {
+                            user: account.id,
+                            session: account.getSessionID(),
+                            account: user,
+                            repository: repository
+                        }).then(() => window.location = '/resource?id=' + repository);
                     };
                 </script>
             </div>
