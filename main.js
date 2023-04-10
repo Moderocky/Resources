@@ -34,6 +34,11 @@ class RequestCache {
     async get(url) {
         if (this.data.hasOwnProperty(url)) {
             if (debugMode) console.log('Knows: ' + url);
+            const date = this.data[url].date;
+            const now = new Date();
+            const difference = Math.abs(Math.floor(((now.getTime() - date.getTime()) / 1000) / 60));
+            if (difference < 2) return this.data[url].value;
+            if (debugMode) console.log('Data is ' + difference + ' minutes old.');
             const etag = this.data[url].etag || '';
             try {
                 const result = await octokit.request({
@@ -74,11 +79,12 @@ class RequestCache {
     }
 
     async cleanUp() {
-        const date = new Date();
-        date.setHours(date.getHours() - this.hours);
-        for (let key in this.data) {
-            if (this.data[key].date.getTime() < date.getTime()) delete this.data[key];
-        }
+        return; // todo
+        // const date = new Date();
+        // date.setHours(date.getHours() - this.hours);
+        // for (let key in this.data) {
+        //     if (this.data[key].date.getTime() < date.getTime()) delete this.data[key];
+        // }
     }
 }
 
