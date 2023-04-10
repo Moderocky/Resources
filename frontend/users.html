@@ -141,8 +141,8 @@
                                 section.querySelector('div[data-profile]').replaceWith(dom.create(`
                                     <div class="w-full p-2 transition-opacity">
                                         <div class="p-1 h-full group sm:flex space-x-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
-                                            <img src="${user.avatar_url}" alt="User icon" loading="lazy" width="300" height="300" class="h-16 w-56 sm:h-full w-full sm:w-4/12 object-cover object-top rounded-lg transition duration-500 group-hover:scale-90"/>
-                                            <div class="w-8/12 p-5 h-full">
+                                            <img src="${user.avatar_url}" alt="User icon" loading="lazy" width="300" height="300" class="sm:h-full w-full md:w-4/12 object-cover object-top rounded-lg transition duration-500 scale-90"/>
+                                            <div class="w-full md:w-8/12 p-5 h-full">
                                                 <div class="space-y-2 flex flex-col h-full">
                                                     <h4 class="text-2xl font-semibold">${user.display_name} ${icon}</h4>
                                                     <p class="">${user.bio || 'No description.'}</p>
@@ -246,7 +246,7 @@
                             const user = await GitHub.getUser(id).awaitReady();
                             const section = document.querySelector('section[data-user-profile]');
                             let element = section.querySelector('div[data-resources]');
-                            element.replaceWith(element = dom.create(`<div class="w-full p-2 transition-opacity"></div>`));
+                            element.replaceWith(element = dom.create(`<div class="w-full transition-opacity"></div>`));
                             Resource.getByUser(id).then(array => {
                                 for (let resource of array) {
                                     resource.getRepository().then(async repository => {
