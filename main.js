@@ -201,7 +201,8 @@ async function api(request, response) {
             data = await cache.get(request.url.substring(8));
             text = JSON.stringify(data);
         } else if (request.url.startsWith('/api/')) {
-            text = await database.fetch(request.url.substring(5)).then(Query.text);
+            if (request.method === 'POST') text = await post(request.url.substring(5), request);
+            else text = await database.fetch(request.url.substring(5)).then(Query.text);
         }
         response.setHeader("Content-Type", 'application/json');
         response.writeHead(200);
@@ -212,6 +213,55 @@ async function api(request, response) {
         response.write(error.toString());
     }
     response.end();
+}
+
+async function post(url, request) {
+    try {
+        const buffers = [];
+        for await (const chunk of request) buffers.push(chunk);
+        const data = querystring.parse(Buffer.concat(buffers).toString());
+        switch (url) {
+            case 'resources/':
+                return await postResource(data);
+            default:
+                break;
+        }
+    } catch (error) {
+        if (debugMode) console.log(error);
+        if (debugMode) return JSON.stringify(error);
+        else return JSON.stringify("Error.");
+    }
+    return 'Ok.';
+}
+
+async function postResource(data) {
+    const user = usercache[data.session];
+    if (!user) throw new Error('No user login session.');
+    const id = await user.id();
+    if (!id) throw new Error('Could not retrieve user ID.');
+    if (id != data.user) throw new Error('Attempted to post from the wrong account.');
+    if (!await isAccountOk(id, data.account)) throw new Error('Attempted to post a third-party resource.');
+    const repository = (await cache.get('/repositories/' + data.repository)).data;
+    if (repository.owner.id != data.account) throw new Error('Repository does not belong to account.');
+    await database.putIfAbsent({
+            id: repository['id'],
+            owner: repository['owner'].id,
+            name: repository['name'],
+            tag_line: repository['description'],
+            icon: repository['owner'].avatar_url
+        }, 'resources', data.repository + '.json');
+    return 'Ok.';
+}
+
+async function isAccountOk(by, from) {
+    if (by == from) return true;
+    const user = (await cache.get('/user/' + by)).data;
+    const url = user['organizations_url'].substring('https://api.github.com'.length);
+    const orgs = (await cache.get(url)).data || [];
+    for (const org of orgs) {
+        if (org.id == from) return true;
+    }
+    return false;
 }
 
 function formEncode(content) {
