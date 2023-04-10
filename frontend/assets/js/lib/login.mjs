@@ -44,6 +44,10 @@ class Account {
         return this.banned;
     }
 
+    getSessionID() {
+        return session.id;
+    }
+
     async getIcon() {
         const id = await this.getId();
         return 'https://avatars.githubusercontent.com/u/' + id + '?v=4';
