@@ -22,12 +22,12 @@ class Checklist {
     }
 
     check(key, value = true) {
-        if ((typeof id === 'string' || id instanceof String)) mark(this.checks[key], value);
+        if ((typeof key === 'string' || key instanceof String)) mark(this.checks[key], value);
         else mark(key, value);
     }
 
     uncheck(key) {
-        if ((typeof id === 'string' || id instanceof String)) mark(this.checks[key], false);
+        if ((typeof key === 'string' || key instanceof String)) mark(this.checks[key], false);
         else mark(key, false);
     }
 
