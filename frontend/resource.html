@@ -202,18 +202,17 @@
                         'from-orange-400/20 to-amber-400/20 hover:from-orange-400/50 hover:to-amber-400/50 transition'];
                     const random = new Random(12);
                     const box = document.getElementById('author-information').firstElementChild;
-                    repository.awaitReady().then(repository => {
-                        repository.getOwner().then(user => {
-                            box.appendChild(dom.create(`
+                    repository.getOwner().then(user => {
+                        box.appendChild(dom.create(`
                             <div class="rounded-xl m-2 px-4 py-6 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl">
                                 <div class="flex flex-auto space-x-4">
                                     <img alt="User icon." class="w-20 h-20 rounded-full" src="` + (user.avatar_url) + `" />
                                     <div class="my-auto">
                                         <h2 class="text-3xl">{name}
                                         ` + (user.type === 'Organization'
-                                ? `<span class="uppercase bg-slate-600 rounded-lg py-1.5 px-2 text-white text-xl">Org</span>` : '') + `</h2>
+                            ? `<span class="uppercase bg-slate-600 rounded-lg py-1.5 px-2 text-white text-xl">Org</span>` : '') + `</h2>
                                         ` + (user.bio != null
-                                ? `<p class="pt-2">` + user.bio + `</p>` : '') + `
+                            ? `<p class="pt-2">` + user.bio + `</p>` : '') + `
                                     </div>
                                 </div>
                                 <div class="mt-4">
@@ -238,21 +237,21 @@
                                     </div>
                                 </div>
                             </div>`, {
-                                following: user.following || 0,
-                                followers: user.followers || 0,
-                                name: (user.name || user.login),
-                                hire: (user.hireable === true ? `<div class="py-1.5 px-3 border-gray-200 dark:border-gray-500 ">For Hire</div>` : '')
-                            }));
-                            let container;
-                            box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
+                            following: user.following || 0,
+                            followers: user.followers || 0,
+                            name: (user.name || user.login),
+                            hire: (user.hireable === true ? `<div class="py-1.5 px-3 border-gray-200 dark:border-gray-500 ">For Hire</div>` : '')
+                        }));
+                        let container;
+                        box.appendChild(container = dom.createElement('div', 'flex', 'flex-wrap'));
 
-                            async function details() {
-                                user.getRepositories().then(async repositories => {
-                                    let i = 0;
-                                    for (let repo of repositories) {
-                                        if (repo.fork) continue;
-                                        i++;
-                                        container.appendChild(dom.create(`
+                        async function details() {
+                            user.getRepositories().then(async repositories => {
+                                let i = 0;
+                                for (let repo of repositories) {
+                                    if (repo.fork) continue;
+                                    i++;
+                                    container.appendChild(dom.create(`
                                     <div class="w-full md:w-4/12 lg:w-6/12 2xl:w-4/12 p-2 cursor-pointer" onclick="window.location.search = '&id=` + repo.id + `'">
                                         <div class="rounded-xl h-full px-4 py-6 bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 shadow-xl shadow-cla-violate bg-gradient-to-r {random}">
                                             <div class="">
@@ -260,43 +259,42 @@
                                             </div>
                                             <div class="flex flex-wrap space-x-4">
                                                 ` + (repo.language != null
-                                                ? `<h2 class="text-md"><i class="fa-solid fa-code text-sky-400 w-6"></i> {language}</h2>`
-                                                : '') + (repo.forks_count != null && repo.forks_count > 0
-                                                ? `<h2 class="text-md"><i class="fa-solid fa-code-fork text-emerald-400"></i> {forks_count}</h2>`
-                                                : '') +
-                                            `<h2 class="text-md"><i class="fa-regular fa-star text-amber-400"></i> {stargazers_count}</h2>
+                                            ? `<h2 class="text-md"><i class="fa-solid fa-code text-sky-400 w-6"></i> {language}</h2>`
+                                            : '') + (repo.forks_count != null && repo.forks_count > 0
+                                            ? `<h2 class="text-md"><i class="fa-solid fa-code-fork text-emerald-400"></i> {forks_count}</h2>`
+                                            : '') +
+                                        `<h2 class="text-md"><i class="fa-regular fa-star text-amber-400"></i> {stargazers_count}</h2>
                                                 <h2 class="text-md"><i class="fa-solid fa-users text-fuchsia-400"></i> {member_count}</h2>
                                             </div>
                                             <p class="mt-4 text-sm">{description}</p>
                                         </div>
                                     </div>`, {
-                                            ...repo,
-                                            member_count: async () => (await repo.getContributors()).length,
-                                            random: () => (options[Math.floor(random.next() * options.length)])
-                                        }));
-                                        if (i > 8) break;
-                                    }
-                                }).catch(console.error);
-                                user.getLanguages().then(async languages => {
-                                    const div = box.querySelector('div[data-languages]');
-                                    for (let name in languages) {
-                                        const variables = {
-                                            name: name,
-                                            value: languages[name],
-                                            colour: (languages[name] > 1000000 ? 'emerald' : languages[name] > 100000 ? 'sky' : languages[name] > 10000 ? 'amber' : 'gray')
-                                        };
-                                        if (name === 'Java') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-java"></i> {name} </p>`, variables));
-                                        else if (name === 'JavaScript') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-js-square"></i> {name} </p>`, variables));
-                                        else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
-                                        else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
-                                        else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
-                                        else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
-                                    }
-                                }).catch(console.error);
-                            }
+                                        ...repo,
+                                        member_count: async () => (await repo.getContributors()).length,
+                                        random: () => (options[Math.floor(random.next() * options.length)])
+                                    }));
+                                    if (i > 8) break;
+                                }
+                            }).catch(console.error);
+                            user.getLanguages().then(async languages => {
+                                const div = box.querySelector('div[data-languages]');
+                                for (let name in languages) {
+                                    const variables = {
+                                        name: name,
+                                        value: languages[name],
+                                        colour: (languages[name] > 1000000 ? 'emerald' : languages[name] > 100000 ? 'sky' : languages[name] > 10000 ? 'amber' : 'gray')
+                                    };
+                                    if (name === 'Java') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-java"></i> {name} </p>`, variables));
+                                    else if (name === 'JavaScript') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-js-square"></i> {name} </p>`, variables));
+                                    else if (name === 'CSS') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-css3-alt"></i> {name} </p>`, variables));
+                                    else if (name === 'HTML') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-html5"></i> {name} </p>`, variables));
+                                    else if (name === 'PHP') div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-brands fa-php"></i> {name} </p>`, variables));
+                                    else div.appendChild(dom.create(`<p data-value="{value}" class="text-{colour}-400"><i class="fa-solid fa-microchip"></i> {name} </p>`, variables));
+                                }
+                            }).catch(console.error);
+                        }
 
-                            details().then();
-                        });
+                        details().then();
                     });
                 </script>
             </div>
