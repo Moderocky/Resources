@@ -42,7 +42,8 @@
                 </div>
                 <div class="w-full flex flex-wrap">
                     <div class="w-full md:w-4/12 xl:w:3/12 md:pr-2">
-                        <div class="select-none cursor-pointer py-6 px-6 m-0 space-y-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-emerald-500 transition shadow-xl">
+                        <div data-button-publish
+                             class="select-none cursor-pointer py-6 px-6 m-0 space-y-2 rounded-xl bg-slate-900 dark:bg-white dark:bg-opacity-10 bg-opacity-10 hover:bg-emerald-500 transition shadow-xl">
                             <h5 class="text-l"><i class="fa-solid fa-file-circle-plus"></i> Post Resource</h5>
                         </div>
                     </div>
@@ -59,6 +60,7 @@
                     import {Checklist} from "./assets/js/lib/checklist.mjs";
                     import {Resource} from "./assets/js/lib/resource.mjs";
                     import {countDownloads, retrieve} from "./assets/js/lib/repository_utils.mjs";
+                    import {http} from "./assets/js/lib/request.mjs";
 
                     const data = {users: {}, repositories: {}};
 
@@ -128,6 +130,14 @@
                             data.users[organisation.id] = organisation;
                         }
                     });
+                    const button = document.querySelector('[data-button-publish]');
+                    button.onclick = () => {
+                        const user = document.querySelector('[data-choose-account]').value;
+                        const repository = document.querySelector('[data-choose-repository]').value;
+                        if (!repository || !user || !account.id) return;
+                        http.post('/api/resources/', {user: account.id, account: user, repository: repository})
+                            .then(() => window.location = '/resource?id=' + repository);
+                    };
                 </script>
             </div>
             <div class="w-full lg:w-3/12 xl:w-4/12 py-2 p-2">
