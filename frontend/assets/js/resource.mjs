@@ -1,19 +1,20 @@
-
 import {dom} from "./lib/dom.mjs";
 import {repository} from "./load.mjs";
 import {GitHub} from "./lib/github.mjs";
 import {countDownloads} from "./lib/repository_utils.mjs";
-import {generateMarkdown, fixMarkdown} from "./lib/readme.mjs";
+import {fixMarkdown, generateMarkdown} from "./lib/readme.mjs";
 
-repository.awaitReady().then(repository => {
+repository.getOwner().then(user => {
     for (const element of document.querySelectorAll('[data-resource-icon]')) {
-        element.src = getIcon();
+        element.src = user['avatar_url'];
     }
-
+});
+repository.getOwner().then(user => {
     for (const element of document.querySelectorAll('[data-author-icon]')) {
-        element.src = repository['owner']['avatar_url'];
+        element.src = user['avatar_url'];
     }
-
+});
+repository.awaitReady().then(repository => {
     for (const element of document.querySelectorAll('[data-last-updated]')) {
         const time = repository['pushed_at'];
         const first = GitHub.parseDate(time), second = Date.now();
@@ -74,12 +75,7 @@ for (const element of document.querySelectorAll('[data-version-history]')) {
             }
             for (let asset of release['assets']) {
                 let icon;
-                if (asset.name.endsWith('.zip')) icon = `<i class="fa-solid fa-file-zipper w-9"></i>`;
-                else if (asset.name.endsWith('.jar')) icon = `<i class="fa-solid fa-file-zipper w-9"></i>`;
-                else if (asset.name.endsWith('.png')) icon = `<i class="fa-solid fa-file-image w-9"></i>`;
-                else if (asset.name.endsWith('.sh')) icon = `<i class="fa-solid fa-file-code w-9"></i>`;
-                else if (asset.name.endsWith('.csv')) icon = `<i class="fa-solid fa-file-csv w-9"></i>`;
-                else icon = `<i class="fa-solid fa-file-lines w-9"></i>`;
+                if (asset.name.endsWith('.zip')) icon = `<i class="fa-solid fa-file-zipper w-9"></i>`; else if (asset.name.endsWith('.jar')) icon = `<i class="fa-solid fa-file-zipper w-9"></i>`; else if (asset.name.endsWith('.png')) icon = `<i class="fa-solid fa-file-image w-9"></i>`; else if (asset.name.endsWith('.sh')) icon = `<i class="fa-solid fa-file-code w-9"></i>`; else if (asset.name.endsWith('.csv')) icon = `<i class="fa-solid fa-file-csv w-9"></i>`; else icon = `<i class="fa-solid fa-file-lines w-9"></i>`;
                 icon = dom.create(icon);
                 icon.classList.add('cursor-alias');
                 icon.onclick = () => window.open(asset['browser_download_url'], '_blank');
@@ -97,15 +93,13 @@ export {generateMarkdown, fixMarkdown}
 
 repository.awaitReady().then(async repository => {
     for (const element of document.querySelectorAll('[data-link-to-repo]')) {
-        if (element.tagName === 'A') element.href = repository['html_url'];
-        else element.onclick = () => window.location = repository['html_url'];
+        if (element.tagName === 'A') element.href = repository['html_url']; else element.onclick = () => window.location = repository['html_url'];
     }
 
     for (const element of document.querySelectorAll('[data-retrieve]')) {
         let value = retrieve(element.dataset.retrieve);
         if (typeof value === 'function') {
-            if (value.constructor.name === 'AsyncFunction') element.appendChild(document.createTextNode((await value()) || ''));
-            else element.appendChild(document.createTextNode(value() || ''));
+            if (value.constructor.name === 'AsyncFunction') element.appendChild(document.createTextNode((await value()) || '')); else element.appendChild(document.createTextNode(value() || ''));
         } else element.appendChild(document.createTextNode(value || ''));
     }
 });
